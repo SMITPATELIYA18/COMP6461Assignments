@@ -12,7 +12,7 @@ public class Httpc {
         if (args.length == 0) {
             int flag = 0;
             System.out.println("******************************** WELCOME TO THE CURL " +
-					"APPLICATION ********************************");
+                    "APPLICATION ********************************");
 
             do {
                 System.out.println("Enter the command or press 0 for exit");
