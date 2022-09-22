@@ -2,26 +2,17 @@ import java.util.List;
 
 public class HttpcLibrary {
 
-    private final String HTTPC = "httpc";
-
     public HttpcLibrary() {}
 
     public void help(List<String> parameters) {
-        if(!parameters.get(0).equals(HTTPC)) {
-            System.out.println("Please, Enter correct command!!!");
-            return;
-        }
-        if(!parameters.get(1).equals("help")) {
-            System.out.println("Please, Check your command!!!");
-            return;
-        }
         if(parameters.size() == 2) {
             System.out.println("httpc is a curl-like application but supports HTTP protocol " +
                     "only.\n" +
-                    "Usage: \n\thttpc command [arguments] \nThe commands are: \n\tget " +
+                    "Usage: \n\thttpc command [arguments] \nThe commands are: \n\tget \t" +
                     "executes a " +
-                    "HTTP GET request and prints the response.\n\t post executes a HTTP POST" +
-                    "request and prints the response. \n\thelp prints this screen. \n\nUse " +
+                    "HTTP GET request and prints the response.\n\tpost \texecutes a HTTP " +
+                    "POST" +
+                    "request and prints the response. \n\thelp \tprints this screen. \n\nUse" +
                     "\"httpc " +
                     "help [command]\" for more information about a command.");
             return;
