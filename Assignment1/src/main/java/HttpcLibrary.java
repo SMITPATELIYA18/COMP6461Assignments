@@ -2,10 +2,11 @@ import java.util.List;
 
 public class HttpcLibrary {
 
-    public HttpcLibrary() {}
+    public HttpcLibrary() {
+    }
 
     public void help(List<String> parameters) {
-        if(parameters.size() == 2) {
+        if (parameters.size() == 2) {
             System.out.println("httpc is a curl-like application but supports HTTP protocol " +
                     "only.\n" +
                     "Usage: \n\thttpc command [arguments] \nThe commands are: \n\tget \t" +
@@ -17,7 +18,7 @@ public class HttpcLibrary {
                     "help [command]\" for more information about a command.");
             return;
         }
-        if(parameters.get(2).equals("get")) {
+        if (parameters.get(2).equals("get")) {
             System.out.println("usage: httpc get [-v] [-h key:value] URL \nGet executes a " +
                     "HTTP GET request for a given URL. \n\t-v Prints the detail of the " +
                     "response such as protocol, status, and headers. \n\t-h key:value " +
@@ -32,5 +33,13 @@ public class HttpcLibrary {
                 " body HTTP POST request. \n\t-f file Associates the content of a file to " +
                 "the body HTTP POST request. \n\tEither [-d] or [-f] can be used but not " +
                 "both.");
+    }
+
+    public void get(List<String> parameters) {
+
+    }
+
+    public void post(List<String> parameters) {
+
     }
 }
