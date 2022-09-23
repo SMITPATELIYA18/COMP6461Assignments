@@ -1,3 +1,5 @@
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
@@ -6,7 +8,7 @@ public class Httpc {
 
     private static final String HTTPC = "httpc";
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws URISyntaxException, IOException {
         String input;
         //ArrayList<String> input_data = new ArrayList<>()
         if (args.length == 0) {
@@ -33,7 +35,7 @@ public class Httpc {
         }
     }
 
-    static void checkCommand(List<String> parameters) {
+    static void checkCommand(List<String> parameters) throws URISyntaxException, IOException {
         if (!parameters.get(0).equals(HTTPC)) {
             System.out.println("Please, Enter correct command!!!");
             return;

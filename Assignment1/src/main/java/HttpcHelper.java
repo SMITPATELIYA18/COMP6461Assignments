@@ -1,9 +1,10 @@
+import java.util.HashMap;
+
 public class HttpcHelper {
     private String requestURL;
     private String inlineData;
     private String redirectLocation;
     private String httpRequest;
-    private String requestMethod;
     private String fileSendPath;
     private String fileWritePath;
     private boolean isVerbosePreset;
@@ -12,6 +13,16 @@ public class HttpcHelper {
     private boolean isFileSend;
     private boolean isFileWrite;
     private boolean isRedirect;
+
+    private HashMap<String, String> headerValue = new HashMap<>();
+
+    public void setHeaderValue(HashMap<String,String> headerValue) {
+        this.headerValue = headerValue;
+    }
+
+    public HashMap<String, String> getHeaderValue() {
+        return this.headerValue;
+    }
 
     public String getRequestURL() {
         return requestURL;
@@ -39,14 +50,6 @@ public class HttpcHelper {
 
     public void setHttpRequest(String httpRequest) {
         this.httpRequest = httpRequest;
-    }
-
-    public String getRequestMethod() {
-        return requestMethod;
-    }
-
-    public void setRequestMethod(String requestMethod) {
-        this.requestMethod = requestMethod;
     }
 
     public String getFileSendPath() {
