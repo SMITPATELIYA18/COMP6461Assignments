@@ -53,17 +53,25 @@ public class HttpcLibrary {
                     "Associates headers to HTTP Request with the format 'key:value'.");
             return;
         }
-        System.out.println("usage: httpc post [-v] [-h key:value] [-d inline-data] [-f file]" +
-                " URL \nPost executes a HTTP POST request for a given URL with inline data " +
-                "or from file. \n\t-v Prints the detail of the response such as protocol, " +
-                "status, and headers. \n\t-h key:value Associates headers to HTTP Request " +
-                "with the format 'key:value'. \n\t-d string Associates an inline data to the" +
-                " body HTTP POST request. \n\t-f file Associates the content of a file to " +
-                "the body HTTP POST request. \nEither [-d] or [-f] can be used but not " +
-                "both.");
+        if(parameters.get(2).equals("post")) {
+            System.out.println("usage: httpc post [-v] [-h key:value] [-d inline-data] [-f file]" +
+                    " URL \nPost executes a HTTP POST request for a given URL with inline data " +
+                    "or from file. \n\t-v Prints the detail of the response such as protocol, " +
+                    "status, and headers. \n\t-h key:value Associates headers to HTTP Request " +
+                    "with the format 'key:value'. \n\t-d string Associates an inline data to the" +
+                    " body HTTP POST request. \n\t-f file Associates the content of a file to " +
+                    "the body HTTP POST request. \nEither [-d] or [-f] can be used but not " +
+                    "both.");
+            return;
+        }
+        System.out.println("Could Not Find an Option or FLag \""+parameters.get(2)+
+                "\"");
+        System.out.println();
+        System.out.println("Run 'httpc help or httpc help <Command>' for available " +
+                "httpc commands and options.");
     }
 
-    public void get(List<String> parameters) throws URISyntaxException, IOException {
+    public void get(List<String> parameters) throws  IOException {
         HttpcHelper getHelper = new HttpcHelper();
         for (int i = 2; i < parameters.size(); i++) {
             if (parameters.get(i).equals("-v")) {
@@ -73,7 +81,10 @@ public class HttpcLibrary {
 //                System.out.println(parameters.get(i+1));
 //                System.out.println(parameters.get(i + 1).contains(":"));
                 if (!parameters.get(i + 1).contains(":")) {
-                    System.out.println("Please, Enter correct command!!!");
+                    System.out.println("did not enter one or more correct 'Headers'.");
+                    System.out.println();
+                    System.out.println("Run 'httpc help or httpc help <Command>' for available " +
+                            "httpc commands and options.");
                     return;
                 }
                 String[] headerValues = parameters.get(i + 1).split(":");
@@ -86,10 +97,23 @@ public class HttpcLibrary {
             } else if (parameters.get(i).equals("-o")) {
                 getHelper.setFileWrite(true);
                 getHelper.setFileWritePath(parameters.get(i + 1));
+            } else {
+                System.out.println("Could Not Find an Option or FLag \""+parameters.get(i)+
+                        "\"");
+                System.out.println();
+                System.out.println("Run 'httpc help or httpc help <Command>' for available " +
+                        "httpc commands and options.");
+                return;
             }
         }
-
-        URI uri = new URI(getHelper.getRequestURL());
+        URI uri = null;
+        try {
+            uri = new URI(getHelper.getRequestURL());
+        } catch (NullPointerException | URISyntaxException e) {
+            System.out.println("did not enter correct URL.");
+            System.out.println("PLease, Try again!!!");
+            return;
+        }
 //        System.out.println("url print "+ uri);
         String host = uri.getHost();
 //        System.out.println(host);
@@ -128,11 +152,14 @@ public class HttpcLibrary {
 
     }
 
-    public void post(List<String> parameters) throws URISyntaxException, IOException {
+    public void post(List<String> parameters) throws IOException {
         StringBuilder fileData = null;
         HttpcHelper postHelper = new HttpcHelper();
         if (parameters.contains("-d") && parameters.contains("-f")) {
-            System.out.println("Please, Enter correct command!!!");
+            System.out.println("Have entered '-d' and '-f in a command.'");
+            System.out.println();
+            System.out.println("Run 'httpc help or httpc help <Command>' for available " +
+                    "httpc commands and options.");
             return;
         }
         for (int i = 2; i < parameters.size(); i++) {
@@ -143,7 +170,10 @@ public class HttpcLibrary {
 //                System.out.println(parameters.get(i+1));
 //                System.out.println(parameters.get(i + 1).contains(":"));
                 if (!parameters.get(i + 1).contains(":")) {
-                    System.out.println("Please, Enter correct command!!!");
+                    System.out.println("did not enter one or more correct 'Headers'.");
+                    System.out.println();
+                    System.out.println("Run 'httpc help or httpc help <Command>' for available " +
+                            "httpc commands and options.");
                     return;
                 }
                 String[] headerValues = parameters.get(i + 1).split(":");
@@ -164,10 +194,24 @@ public class HttpcLibrary {
                 postHelper.setFileSendPath(parameters.get(i + 1));
                 fileData = new StringBuilder();
 //                System.out.println("HIi");
+            } else {
+                System.out.println("Could Not Find an Option or FLag \""+parameters.get(i)+
+                        "\"");
+                System.out.println();
+                System.out.println("Run 'httpc help or httpc help <Command>' for available " +
+                        "httpc commands and options.");
+                return;
             }
         }
 //        System.out.println(postHelper.getRequestURL() + "HIi");
-        URI uri = new URI(postHelper.getRequestURL());
+        URI uri = null;
+        try {
+            uri = new URI(postHelper.getRequestURL());
+        } catch (NullPointerException | URISyntaxException e) {
+            System.out.println("did not enter correct URL.");
+            System.out.println("PLease, Try again!!!");
+            return;
+        }
         Socket socket = new Socket(uri.getHost(), 80);
         String postPath = "";
         if (uri.getPath() != null) {
