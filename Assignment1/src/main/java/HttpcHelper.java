@@ -16,12 +16,12 @@ public class HttpcHelper {
 
     private HashMap<String, String> headerValue = new HashMap<>();
 
-    public void setHeaderValue(HashMap<String,String> headerValue) {
-        this.headerValue = headerValue;
-    }
-
     public HashMap<String, String> getHeaderValue() {
         return this.headerValue;
+    }
+
+    public void setHeaderValue(HashMap<String, String> headerValue) {
+        this.headerValue = headerValue;
     }
 
     public String getRequestURL() {

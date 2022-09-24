@@ -1,0 +1,15 @@
+httpc get http://httpbin.org/status/418
+httpc get -v http://httpbin.org/status/418
+httpc get -v -h ID1:40202779 -h ID2:40200503 http://httpbin.org/status/418
+
+httpc get http://httpbin.org/get?course=networking&assignment=1
+httpc get -v http://httpbin.org/get?course=networking&assignment=1
+httpc get -v -h ID1:40202779 -h ID2:40200503 http://httpbin.org/get?course=networking&assignment=1
+
+httpc help
+httpc help get
+httpc help post
+
+httpc get http://webhook.site/ec5ab457-4b8f-4d1d-8484-fcc3a5d0c26d?q=hello%20world
+
+httpc post -f fileData.json http://httpbin.org/post

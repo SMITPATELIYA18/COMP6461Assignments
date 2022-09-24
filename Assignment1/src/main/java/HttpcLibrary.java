@@ -8,9 +8,29 @@ import java.util.Map;
 
 public class HttpcLibrary {
 
-    private String NewLineCharacter = "\r\n";
+    private final String NewLineCharacter = "\r\n";
 
     public HttpcLibrary() {
+    }
+
+    private static void printOnConsole(BufferedReader bufferedReader, String status,
+                                       HttpcHelper getHelper) throws IOException {
+        String line;
+//        System.out.println("Sa"+status);
+        if (getHelper.isVerbosePreset()) {
+            System.out.println(status);
+            while ((line = bufferedReader.readLine()) != null) {
+                System.out.println(line);
+            }
+        } else {
+            while ((line = bufferedReader.readLine()) != null) {
+                if (line.equals(""))
+                    break;
+            }
+            while ((line = bufferedReader.readLine()) != null) {
+                System.out.println(line);
+            }
+        }
     }
 
     public void help(List<String> parameters) {
@@ -39,45 +59,49 @@ public class HttpcLibrary {
                 "status, and headers. \n\t-h key:value Associates headers to HTTP Request " +
                 "with the format 'key:value'. \n\t-d string Associates an inline data to the" +
                 " body HTTP POST request. \n\t-f file Associates the content of a file to " +
-                "the body HTTP POST request. \n\tEither [-d] or [-f] can be used but not " +
+                "the body HTTP POST request. \nEither [-d] or [-f] can be used but not " +
                 "both.");
     }
 
     public void get(List<String> parameters) throws URISyntaxException, IOException {
         HttpcHelper getHelper = new HttpcHelper();
-        HashMap<String, String> headerValue = new HashMap<>();
         for (int i = 2; i < parameters.size(); i++) {
-            if(parameters.get(i).equals("-v")) {
+            if (parameters.get(i).equals("-v")) {
                 getHelper.setVerbosePreset(true);
-            } else if(parameters.get(i).equals("-h")) {
-                if (parameters.get(i + 1).contains(":")) {
+            } else if (parameters.get(i).equals("-h")) {
+                HashMap<String, String> headerValue = getHelper.getHeaderValue();
+//                System.out.println(parameters.get(i+1));
+//                System.out.println(parameters.get(i + 1).contains(":"));
+                if (!parameters.get(i + 1).contains(":")) {
                     System.out.println("Please, Enter correct command!!!");
                     return;
                 }
                 String[] headerValues = parameters.get(i + 1).split(":");
                 headerValue.put(headerValues[0], headerValues[1]);
+                getHelper.setHttpHeader(true);
                 getHelper.setHeaderValue(headerValue);
-            } else if(parameters.get(i).startsWith("http://") || parameters.get(i).startsWith("https://")) {
+            } else if (parameters.get(i).startsWith("http://") || parameters.get(i)
+                    .startsWith("https://")) {
                 getHelper.setRequestURL(parameters.get(i));
-            } else if(parameters.get(i).equals("-o")) {
+            } else if (parameters.get(i).equals("-o")) {
                 getHelper.setFileWrite(true);
-                getHelper.setFileWritePath(parameters.get(i+1));
+                getHelper.setFileWritePath(parameters.get(i + 1));
             }
         }
 
         URI uri = new URI(getHelper.getRequestURL());
-        System.out.println("url print "+ uri);
+//        System.out.println("url print "+ uri);
         String host = uri.getHost();
 //        System.out.println(host);
         Socket socket = new Socket(host, 80);
         String uriPath = "";
-        if(uri.getHost() != null)
+        if (uri.getPath() != null)
             uriPath += uri.getPath();
         else
-            uriPath +="/";
+            uriPath += "/";
 
-        if(uri.getQuery() != null)
-            uriPath+= uri.getQuery();
+        if (uri.getQuery() != null)
+            uriPath += "?" + uri.getQuery();
 //        System.out.println(uriPath);
         OutputStream socketOutputStream = socket.getOutputStream();
         PrintWriter writer = new PrintWriter(socketOutputStream);
@@ -86,10 +110,12 @@ public class HttpcLibrary {
 
         writer.print("Host: " + host + NewLineCharacter);
 
-        if(getHelper.isHttpHeader()) {
-            for (Map.Entry<String, String> headers:
+        if (getHelper.isHttpHeader()) {
+//            System.out.println("In Header");
+            for (Map.Entry<String, String> headers :
                     getHelper.getHeaderValue().entrySet()) {
-                writer.write(headers.getKey()+":"+headers.getValue()+NewLineCharacter);
+//                System.out.println(headers.getKey()+" "+headers.getValue());
+                writer.print(headers.getKey() + ":" + headers.getValue() + NewLineCharacter);
             }
         }
 
@@ -102,34 +128,107 @@ public class HttpcLibrary {
 
     }
 
-    public void post(List<String> parameters) {
-
-    }
-
-    private static void printOnConsole(BufferedReader bufferedReader, String status,
-                                       HttpcHelper getHelper) throws IOException {
-        String line = null;
-//        System.out.println("Sa"+status);
-        if(getHelper.isVerbosePreset()) {
-            System.out.println(status);
-            while ((line = bufferedReader.readLine()) != null) {
-                System.out.println(line);
-                if (line.equals("}"))
-                    break;
-            }
-        } else {
-//            System.out.println("hii");
-            boolean isJson = false;
-            while ((line = bufferedReader.readLine()) != null) {
-                System.out.println(line);
-//                if (line.trim().equals("{"))
-//                    isJson = true;
-//                if (isJson) {
-//                    System.out.println(line);
-//                    if (line.equals("}"))
-//                        break;
-//                }
+    public void post(List<String> parameters) throws URISyntaxException, IOException {
+        StringBuilder fileData = null;
+        HttpcHelper postHelper = new HttpcHelper();
+        if (parameters.contains("-d") && parameters.contains("-f")) {
+            System.out.println("Please, Enter correct command!!!");
+            return;
+        }
+        for (int i = 2; i < parameters.size(); i++) {
+            if (parameters.get(i).equals("-v")) {
+                postHelper.setVerbosePreset(true);
+            } else if (parameters.get(i).equals("-h")) {
+                HashMap<String, String> headerValue = postHelper.getHeaderValue();
+//                System.out.println(parameters.get(i+1));
+//                System.out.println(parameters.get(i + 1).contains(":"));
+                if (!parameters.get(i + 1).contains(":")) {
+                    System.out.println("Please, Enter correct command!!!");
+                    return;
+                }
+                String[] headerValues = parameters.get(i + 1).split(":");
+                headerValue.put(headerValues[0], headerValues[1]);
+                postHelper.setHttpHeader(true);
+                postHelper.setHeaderValue(headerValue);
+            } else if (parameters.get(i).startsWith("http://") || parameters.get(i)
+                    .startsWith("https://")) {
+                postHelper.setRequestURL(parameters.get(i));
+            } else if (parameters.get(i).equals("-o")) {
+                postHelper.setFileWrite(true);
+                postHelper.setFileWritePath(parameters.get(i + 1));
+            } else if (parameters.get(i).equals("-d")) {
+                postHelper.setInlineData(true);
+                postHelper.setInlineData(parameters.get(i + 1));
+            } else if (parameters.get(i).equals("-f")) {
+                postHelper.setFileSend(true);
+                postHelper.setFileSendPath(parameters.get(i + 1));
+                fileData = new StringBuilder();
+//                System.out.println("HIi");
             }
         }
+//        System.out.println(postHelper.getRequestURL() + "HIi");
+        URI uri = new URI(postHelper.getRequestURL());
+        Socket socket = new Socket(uri.getHost(), 80);
+        String postPath = "";
+        if (uri.getPath() != null) {
+            postPath = postPath + uri.getPath();
+        } else {
+            postPath = "/";
+        }
+
+        OutputStream socketOutputStream = socket.getOutputStream();
+        PrintWriter writer = new PrintWriter(socketOutputStream);
+
+        writer.println("POST " + postPath + " HTTP/1.0");
+
+        writer.print("Host: " + uri.getHost() + NewLineCharacter);
+
+        if (postHelper.isHttpHeader()) {
+//            System.out.println("In Header");
+            for (Map.Entry<String, String> headers :
+                    postHelper.getHeaderValue().entrySet()) {
+//                System.out.println(headers.getKey()+" "+headers.getValue());
+                writer.print(headers.getKey() + ":" + headers.getValue() + NewLineCharacter);
+            }
+        }
+
+        if (postHelper.isInlineData()) {
+            if (postHelper.getInlineData().contains("'")) {
+                postHelper.setInlineData(postHelper.getInlineData().replace("'", ""));
+            }
+            if (postHelper.getInlineData().equals("\"")) {
+                postHelper.setInlineData(postHelper.getInlineData().replace("'\"", ""));
+            }
+            writer.print("Content-Length: " + postHelper.getInlineData()
+                    .length() + NewLineCharacter);
+        } else if (postHelper.isFileSend()) {
+            File dataFile = new File(postHelper.getFileSendPath());
+            BufferedReader fileReader = new BufferedReader(new FileReader(dataFile));
+            String tempFileData = null;
+            while ((tempFileData = fileReader.readLine()) != null) {
+                fileData.append(tempFileData);
+            }
+//            System.out.println(fileData.toString());
+            writer.print("Content-Length: " + fileData.length() + NewLineCharacter);
+            fileReader.close();
+        }
+
+        if (postHelper.isInlineData()) {
+            writer.print(NewLineCharacter);
+            writer.print(postHelper.getInlineData());
+            writer.print(NewLineCharacter);
+        } else if (postHelper.isFileSend()) {
+            writer.print(NewLineCharacter);
+            writer.print(fileData.toString());
+            writer.print(NewLineCharacter);
+        } else {
+            writer.print(NewLineCharacter);
+        }
+
+        writer.flush();
+
+        BufferedReader getResponseFromSocket =
+                new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        printOnConsole(getResponseFromSocket, getResponseFromSocket.readLine(), postHelper);
     }
 }

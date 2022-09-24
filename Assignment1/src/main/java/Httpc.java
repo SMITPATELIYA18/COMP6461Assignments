@@ -29,15 +29,18 @@ public class Httpc {
             }
             while (flag != 1);
         } else {
-            input = args.toString();
-            List<String> input_split = Arrays.asList(input.split(" "));
-            checkCommand(input_split);
+//            input = Arrays.toString(args);
+//            System.out.println(input);
+//            List<String> input_split = Arrays.asList(input.split(" "));
+            checkCommand(List.of(args));
         }
     }
 
     static void checkCommand(List<String> parameters) throws URISyntaxException, IOException {
+//        System.out.println(parameters.toString());
         if (!parameters.get(0).equals(HTTPC)) {
             System.out.println("Please, Enter correct command!!!");
+//            System.out.println("HIi");
             return;
         }
         HttpcLibrary http_lib = new HttpcLibrary();
