@@ -1,0 +1,80 @@
+Timestamp: 2022-10-06 22:56:20.3
+
+HTTP/1.1 418 I'M A TEAPOT
+Date: Fri, 07 Oct 2022 02:56:20 GMT
+Content-Length: 135
+Connection: close
+Server: gunicorn/19.9.0
+x-more-info: http://tools.ietf.org/html/rfc2324
+Access-Control-Allow-Origin: *
+Access-Control-Allow-Credentials: true
+
+
+    -=[ teapot ]=-
+
+       _...._
+     .'  _ _ `.
+    | ."` ^ `". _,
+    \_;`"---"`|//
+      |       ;/
+      \_     _/
+        `"""`
+
+Timestamp: 2022-10-06 22:58:17.053
+
+HTTP/1.1 200 OK
+Date: Fri, 07 Oct 2022 02:58:17 GMT
+Content-Type: application/json
+Content-Length: 283
+Connection: close
+Server: gunicorn/19.9.0
+Access-Control-Allow-Origin: *
+Access-Control-Allow-Credentials: true
+
+{
+  "args": {
+    "assignment": "1", 
+    "course": "networking"
+  }, 
+  "headers": {
+    "Host": "httpbin.org", 
+    "X-Amzn-Trace-Id": "Root=1-633f95c9-7a80c1763d48fe570479dc2b"
+  }, 
+  "origin": "142.119.28.61", 
+  "url": "http://httpbin.org/get?course=networking&assignment=1"
+}
+
+Timestamp: 2022-10-06 23:02:01.664
+
+{
+  "args": {}, 
+  "data": "{  Name: Smit,  Surname: Pateliya}", 
+  "files": {}, 
+  "form": {}, 
+  "headers": {
+    "Content-Length": "34", 
+    "Host": "httpbin.org", 
+    "X-Amzn-Trace-Id": "Root=1-633f96aa-3f972ca852e5021842cc732f"
+  }, 
+  "json": null, 
+  "origin": "142.119.28.61", 
+  "url": "http://httpbin.org/post"
+}
+
+Timestamp: 2022-10-06 23:23:22.901
+
+{
+  "args": {}, 
+  "data": "{  Name: Smit,  Surname: Pateliya}", 
+  "files": {}, 
+  "form": {}, 
+  "headers": {
+    "Content-Length": "34", 
+    "Host": "httpbin.org", 
+    "X-Amzn-Trace-Id": "Root=1-633f9bab-3814c6a97e3d0af466e4a2dd"
+  }, 
+  "json": null, 
+  "origin": "142.119.28.61", 
+  "url": "http://httpbin.org/post"
+}
+

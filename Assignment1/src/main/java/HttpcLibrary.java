@@ -119,7 +119,13 @@ public class HttpcLibrary {
         for (int i = 2; i < parameters.size(); i++) {
             if (parameters.get(i).equals("-v")) {
                 getHelper.setVerbosePreset(true);
-            } else if (parameters.get(i).equals("-h")) {
+            } 
+            else if (parameters.get(i).equals("-d")) {
+            	getHelper .setInlineData(true);
+            	getHelper .setInlineData(parameters.get(i + 1));
+                i++;
+            }
+            else if (parameters.get(i).equals("-h")) {
                 HashMap<String, String> headerValue = getHelper.getHeaderValue();
 //                System.out.println(parameters.get(i+1));
 //                System.out.println(parameters.get(i + 1).contains(":"));
@@ -197,6 +203,17 @@ public class HttpcLibrary {
                 writer.print(headers.getKey() + ":" + headers.getValue() + NewLineCharacter);
             }
         }
+        
+        if (getHelper.isInlineData()) {
+            if (getHelper.getInlineData().contains("'")) {
+            	getHelper.setInlineData(getHelper.getInlineData().replace("'", ""));
+            }
+            if (getHelper.getInlineData().equals("\"")) {
+            	getHelper.setInlineData(getHelper.getInlineData().replace("'\"", ""));
+            }
+            writer.print("Content-Length: " + getHelper.getInlineData()
+                    .length() + NewLineCharacter);
+        } 
 
         writer.print(NewLineCharacter);
         writer.flush();
