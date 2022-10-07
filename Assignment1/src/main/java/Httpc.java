@@ -1,12 +1,11 @@
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
 public class Httpc {
 
-    private static final String HTTPC = "httpc";
+    public static final String HTTPC = "httpc";
 
     public static void main(String[] args) throws IOException {
         String input;
@@ -39,7 +38,7 @@ public class Httpc {
     static void checkCommand(List<String> parameters) throws IOException {
 //        System.out.println(parameters.toString());
         if (!parameters.get(0).equals(HTTPC)) {
-            System.out.println("Command Not Found: "+parameters.get(0));
+            System.out.println("Command Not Found: " + parameters.get(0));
 //            System.out.println("HIi");
             return;
         }
@@ -63,7 +62,7 @@ public class Httpc {
             } else if (parameters.get(1).equals("post")) {
                 http_lib.post(parameters);
             } else {
-                System.out.println("Could Not Find an Option or FLag \""+parameters.get(1)+
+                System.out.println("Could Not Find an Option or FLag \"" + parameters.get(1) +
                         "\"");
                 System.out.println();
                 System.out.println("Run 'httpc help or httpc help <Command>' for available " +
