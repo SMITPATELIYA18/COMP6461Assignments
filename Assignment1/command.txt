@@ -30,6 +30,8 @@ httpc post -v -h ID:1111 http://httpbin.org/post
 //data using inline
 httpc post -d '{A1:402200}' http://httpbin.org/post
 
+httpc post -v -h ID:1111 -d '{A1:402200}' http://httpbin.org/post
+
 //data USING FILE
 httpc post -f fileData.json http://httpbin.org/post
 

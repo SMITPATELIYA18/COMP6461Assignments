@@ -1,3 +1,9 @@
+//-------------------------------------------------
+// Assignment 1
+// © Smit Pateliya and Raviraj Savaliya
+// Written by: Smit Pateliya (40202779) & Raviraj Savaliya (40200503)
+//-------------------------------------------------
+
 import java.io.*;
 import java.net.Socket;
 import java.net.URI;
@@ -9,34 +15,54 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * This class is Httpc library class.
+ * Help, Get and Post method executes in this class and return results.
+ */
 public class HttpcLibrary {
 
+    /**
+     * New Line Character
+     */
     private final String NewLineCharacter = "\r\n";
 
+    /**
+     * Empty Constructor
+     */
     public HttpcLibrary() {
     }
 
+    /**
+     * This method prints result on the Console.
+     * @param bufferedReader Result from socket class.
+     * @param status Status of the command
+     * @param getHelper Helper object from Get or Post method
+     * @throws IOException throws if there is an error in file reading or writing
+     */
     private static void printOnConsole(BufferedReader bufferedReader, String status,
                                        HttpcHelper getHelper) throws IOException {
         String line;
-//        System.out.println("Sa"+status);
         if (getHelper.isVerbosePreset()) {
             System.out.println(status);
-            while ((line = bufferedReader.readLine()) != null) {
-                System.out.println(line);
-            }
         } else {
             while ((line = bufferedReader.readLine()) != null) {
 //                System.out.println(line);
                 if (line.equals(""))
                     break;
             }
-            while ((line = bufferedReader.readLine()) != null) {
-                System.out.println(line);
-            }
+        }
+        while ((line = bufferedReader.readLine()) != null) {
+            System.out.println(line);
         }
     }
 
+    /**
+     * This method prints result in the given file.
+     * @param bufferedReader Result from socket class.
+     * @param status Status of the command
+     * @param getHelper Helper object from Get or Post method
+     * @throws IOException throws if there is an error in file reading or writing
+     */
     private static void printInFile(BufferedReader bufferedReader, String status,
                                     HttpcHelper getHelper) throws IOException {
         FileWriter fileWriter = new FileWriter(getHelper.getFileWritePath(), true);
@@ -49,17 +75,14 @@ public class HttpcLibrary {
 
         if (getHelper.isVerbosePreset()) {
             printWriter.println(status);
-            while ((line = bufferedReader.readLine()) != null) {
-                printWriter.println(line);
-            }
         } else {
             while ((line = bufferedReader.readLine()) != null) {
                 if (line.equals(""))
                     break;
             }
-            while ((line = bufferedReader.readLine()) != null) {
-                printWriter.println(line);
-            }
+        }
+        while ((line = bufferedReader.readLine()) != null) {
+            printWriter.println(line);
         }
         printWriter.println();
         System.out.println("Response has been written in " + getHelper.getFileWritePath() +
@@ -69,6 +92,10 @@ public class HttpcLibrary {
 
     }
 
+    /**
+     * This method executes help command.
+     * @param parameters Httpc command parameters
+     */
     public void help(List<String> parameters) {
         if (parameters.size() == 2) {
             System.out.println("httpc is a curl-like application but supports HTTP protocol " +
@@ -113,8 +140,12 @@ public class HttpcLibrary {
                 "httpc commands and options.");
     }
 
+    /**
+     * This method executes get Command
+     * @param parameters Httpc command parameters
+     * @throws IOException throws if there is an error in file reading or writing
+     */
     public void get(List<String> parameters) throws IOException {
-//        System.out.println("----------------------------------"+parameters);
         HttpcHelper getHelper = new HttpcHelper();
         for (int i = 2; i < parameters.size(); i++) {
             if (parameters.get(i).equals("-v")) {
@@ -127,8 +158,6 @@ public class HttpcLibrary {
             }
             else if (parameters.get(i).equals("-h")) {
                 HashMap<String, String> headerValue = getHelper.getHeaderValue();
-//                System.out.println(parameters.get(i+1));
-//                System.out.println(parameters.get(i + 1).contains(":"));
                 if (!parameters.get(i + 1).contains(":")) {
                     System.out.println("did not enter one or more correct 'Headers'.");
                     System.out.println();
@@ -172,7 +201,7 @@ public class HttpcLibrary {
             return;
         }
         String host = uri.getHost();
-        Socket socket = null;
+        Socket socket;
         try {
             socket = new Socket(host, 80);
         } catch (UnknownHostException e) {
@@ -187,7 +216,6 @@ public class HttpcLibrary {
 
         if (uri.getQuery() != null)
             uriPath += "?" + uri.getQuery();
-//        System.out.println(uriPath);
         OutputStream socketOutputStream = socket.getOutputStream();
         PrintWriter writer = new PrintWriter(socketOutputStream);
 
@@ -196,10 +224,8 @@ public class HttpcLibrary {
         writer.print("Host: " + host + NewLineCharacter);
 
         if (getHelper.isHttpHeader()) {
-//            System.out.println("In Header");
             for (Map.Entry<String, String> headers :
                     getHelper.getHeaderValue().entrySet()) {
-//                System.out.println(headers.getKey()+" "+headers.getValue());
                 writer.print(headers.getKey() + ":" + headers.getValue() + NewLineCharacter);
             }
         }
@@ -235,9 +261,7 @@ public class HttpcLibrary {
             String response;
             List<String> redirectParameters = new ArrayList<>();
             while ((response = getResponseFromSocket.readLine()) != null) {
-//                System.out.println("1");
                 if (response.startsWith("Location:")) {
-//                    System.out.println("HII");
                     redirectParameters.add(Httpc.HTTPC);
                     redirectParameters.add("get");
                     redirectParameters.add("-v");
@@ -256,6 +280,11 @@ public class HttpcLibrary {
 
     }
 
+    /**
+     * This method executes post command
+     * @param parameters Httpc command parameters
+     * @throws IOException throws if there is an error in file reading or writing
+     */
     public void post(List<String> parameters) throws IOException {
         StringBuilder fileData = null;
         HttpcHelper postHelper = new HttpcHelper();
@@ -271,8 +300,6 @@ public class HttpcLibrary {
                 postHelper.setVerbosePreset(true);
             } else if (parameters.get(i).equals("-h")) {
                 HashMap<String, String> headerValue = postHelper.getHeaderValue();
-//                System.out.println(parameters.get(i+1));
-//                System.out.println(parameters.get(i + 1).contains(":"));
                 if (!parameters.get(i + 1).contains(":")) {
                     System.out.println("did not enter one or more correct 'Headers'.");
                     System.out.println();
@@ -312,8 +339,7 @@ public class HttpcLibrary {
                 return;
             }
         }
-//        System.out.println(postHelper.getRequestURL() + "HIi");
-        URI uri = null;
+        URI uri;
         try {
             uri = new URI(postHelper.getRequestURL());
         } catch (NullPointerException | URISyntaxException e) {
@@ -327,7 +353,7 @@ public class HttpcLibrary {
             return;
         }
         String host = uri.getHost();
-        Socket socket = null;
+        Socket socket;
         try {
             socket = new Socket(host, 80);
         } catch (UnknownHostException e) {
@@ -349,10 +375,8 @@ public class HttpcLibrary {
         writer.print("Host: " + uri.getHost() + NewLineCharacter);
 
         if (postHelper.isHttpHeader()) {
-//            System.out.println("In Header");
             for (Map.Entry<String, String> headers :
                     postHelper.getHeaderValue().entrySet()) {
-//                System.out.println(headers.getKey()+" "+headers.getValue());
                 writer.print(headers.getKey() + ":" + headers.getValue() + NewLineCharacter);
             }
         }
@@ -369,11 +393,10 @@ public class HttpcLibrary {
         } else if (postHelper.isFileSend()) {
             File dataFile = new File(postHelper.getFileSendPath());
             BufferedReader fileReader = new BufferedReader(new FileReader(dataFile));
-            String tempFileData = null;
+            String tempFileData;
             while ((tempFileData = fileReader.readLine()) != null) {
                 fileData.append(tempFileData);
             }
-//            System.out.println(fileData.toString());
             writer.print("Content-Length: " + fileData.length() + NewLineCharacter);
             fileReader.close();
         }

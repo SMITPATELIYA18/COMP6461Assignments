@@ -1,7 +1,7 @@
-Timestamp: 2022-10-06 22:56:20.3
+Timestamp: 2022-10-08 18:43:39.18
 
 HTTP/1.1 418 I'M A TEAPOT
-Date: Fri, 07 Oct 2022 02:56:20 GMT
+Date: Sat, 08 Oct 2022 22:43:39 GMT
 Content-Length: 135
 Connection: close
 Server: gunicorn/19.9.0
@@ -20,31 +20,7 @@ Access-Control-Allow-Credentials: true
       \_     _/
         `"""`
 
-Timestamp: 2022-10-06 22:58:17.053
-
-HTTP/1.1 200 OK
-Date: Fri, 07 Oct 2022 02:58:17 GMT
-Content-Type: application/json
-Content-Length: 283
-Connection: close
-Server: gunicorn/19.9.0
-Access-Control-Allow-Origin: *
-Access-Control-Allow-Credentials: true
-
-{
-  "args": {
-    "assignment": "1", 
-    "course": "networking"
-  }, 
-  "headers": {
-    "Host": "httpbin.org", 
-    "X-Amzn-Trace-Id": "Root=1-633f95c9-7a80c1763d48fe570479dc2b"
-  }, 
-  "origin": "142.119.28.61", 
-  "url": "http://httpbin.org/get?course=networking&assignment=1"
-}
-
-Timestamp: 2022-10-06 23:02:01.664
+Timestamp: 2022-10-08 18:47:02.071
 
 {
   "args": {}, 
@@ -54,14 +30,14 @@ Timestamp: 2022-10-06 23:02:01.664
   "headers": {
     "Content-Length": "34", 
     "Host": "httpbin.org", 
-    "X-Amzn-Trace-Id": "Root=1-633f96aa-3f972ca852e5021842cc732f"
+    "X-Amzn-Trace-Id": "Root=1-6341fde6-75e9dd287c7518126be0f230"
   }, 
   "json": null, 
   "origin": "142.119.28.61", 
   "url": "http://httpbin.org/post"
 }
 
-Timestamp: 2022-10-06 23:23:22.901
+Timestamp: 2022-10-08 19:18:11.687
 
 {
   "args": {}, 
@@ -71,7 +47,7 @@ Timestamp: 2022-10-06 23:23:22.901
   "headers": {
     "Content-Length": "34", 
     "Host": "httpbin.org", 
-    "X-Amzn-Trace-Id": "Root=1-633f9bab-3814c6a97e3d0af466e4a2dd"
+    "X-Amzn-Trace-Id": "Root=1-63420533-609a344b52daf0d351eec9e3"
   }, 
   "json": null, 
   "origin": "142.119.28.61", 

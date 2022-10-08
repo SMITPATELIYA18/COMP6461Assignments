@@ -1,10 +1,17 @@
+//-------------------------------------------------
+// Assignment 1
+// © Smit Pateliya and Raviraj Savaliya
+// Written by: Smit Pateliya (40202779) & Raviraj Savaliya (40200503)
+//-------------------------------------------------
+
 import java.util.HashMap;
 
+/**
+ * This is a helper class for HttpcLibrary class.
+ */
 public class HttpcHelper {
     private String requestURL;
     private String inlineData;
-    private String redirectLocation;
-    private String httpRequest;
     private String fileSendPath;
     private String fileWritePath;
     private boolean isVerbosePreset;
@@ -12,7 +19,6 @@ public class HttpcHelper {
     private boolean isInlineData;
     private boolean isFileSend;
     private boolean isFileWrite;
-    private boolean isRedirect;
 
     private HashMap<String, String> headerValue = new HashMap<>();
 
@@ -34,22 +40,6 @@ public class HttpcHelper {
 
     public String getInlineData() {
         return inlineData;
-    }
-
-    public String getRedirectLocation() {
-        return redirectLocation;
-    }
-
-    public void setRedirectLocation(String redirectLocation) {
-        this.redirectLocation = redirectLocation;
-    }
-
-    public String getHttpRequest() {
-        return httpRequest;
-    }
-
-    public void setHttpRequest(String httpRequest) {
-        this.httpRequest = httpRequest;
     }
 
     public String getFileSendPath() {
@@ -111,14 +101,5 @@ public class HttpcHelper {
     public void setFileWrite(boolean fileWrite) {
         isFileWrite = fileWrite;
     }
-
-    public boolean isRedirect() {
-        return isRedirect;
-    }
-
-    public void setRedirect(boolean redirect) {
-        isRedirect = redirect;
-    }
-
 
 }
