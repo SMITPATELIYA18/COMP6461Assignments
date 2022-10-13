@@ -113,7 +113,8 @@ public class HttpcLibrary {
             System.out.println("usage: httpc get [-v] [-h key:value] URL \nGet executes a " +
                     "HTTP GET request for a given URL. \n\t-v Prints the detail of the " +
                     "response such as protocol, status, and headers. \n\t-h key:value " +
-                    "Associates headers to HTTP Request with the format 'key:value'.");
+                    "Associates headers to HTTP Request with the format 'key:value'.\n\t-o " +
+                    "filename.txt Print result in the file");
             return;
         }
         if (parameters.get(2).equals("post")) {
@@ -129,7 +130,8 @@ public class HttpcLibrary {
                     " the" +
                     " body HTTP POST request. \n\t-f file Associates the content of a file " +
                     "to " +
-                    "the body HTTP POST request. \nEither [-d] or [-f] can be used but not " +
+                    "the body HTTP POST request. \n\t-o filename.txt Print result in the " +
+                    "file \nEither [-d] or [-f] can be used but not " +
                     "both.");
             return;
         }
@@ -150,11 +152,6 @@ public class HttpcLibrary {
         for (int i = 2; i < parameters.size(); i++) {
             if (parameters.get(i).equals("-v")) {
                 getHelper.setVerbosePreset(true);
-            } 
-            else if (parameters.get(i).equals("-d")) {
-            	getHelper .setInlineData(true);
-            	getHelper .setInlineData(parameters.get(i + 1));
-                i++;
             }
             else if (parameters.get(i).equals("-h")) {
                 HashMap<String, String> headerValue = getHelper.getHeaderValue();
@@ -418,10 +415,41 @@ public class HttpcLibrary {
         BufferedReader getResponseFromSocket =
                 new BufferedReader(new InputStreamReader(socket.getInputStream()));
         String responseStatus = getResponseFromSocket.readLine();
+        getResponseFromSocket.mark(1000);
         if (postHelper.isFileWrite()) {
             printInFile(getResponseFromSocket, responseStatus, postHelper);
         } else {
             printOnConsole(getResponseFromSocket, responseStatus, postHelper);
+        }
+
+        //Redirect
+        String[] responseStatusArray = responseStatus.split(" ");
+        getResponseFromSocket.reset();
+        if (responseStatusArray[1].startsWith("3")) {
+            String response;
+            List<String> redirectParameters = new ArrayList<>();
+            while ((response = getResponseFromSocket.readLine()) != null) {
+                if (response.startsWith("Location:")) {
+                    redirectParameters.add(Httpc.HTTPC);
+                    redirectParameters.add("post");
+                    redirectParameters.add("-v");
+                    if(postHelper.isFileSend()){
+                        redirectParameters.add("-f");
+                        redirectParameters.add(postHelper.getFileSendPath());
+                    }
+                    if(postHelper.isInlineData()) {
+                        redirectParameters.add("-d");
+                        redirectParameters.add(postHelper.getInlineData());
+                    }
+                    redirectParameters.add("-h");
+                    redirectParameters.add("Keep-Alive:10");
+                    redirectParameters.add("-h");
+                    redirectParameters.add("Accept-language:en");
+                    redirectParameters.add("http://" + host + "/" + response.split(" ")[1]);
+                    break;
+                }
+            }
+            get(redirectParameters);
         }
     }
 }
