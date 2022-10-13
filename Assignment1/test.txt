@@ -1,0 +1,26 @@
+Timestamp: 2022-10-13 18:53:43.09
+
+HTTP/1.1 200 OK
+Date: Thu, 13 Oct 2022 22:53:43 GMT
+Content-Type: application/json
+Content-Length: 328
+Connection: close
+Server: gunicorn/19.9.0
+Access-Control-Allow-Origin: *
+Access-Control-Allow-Credentials: true
+
+{
+  "args": {}, 
+  "data": "{  Name: smit123,  Surname: Pateliya}", 
+  "files": {}, 
+  "form": {}, 
+  "headers": {
+    "Content-Length": "37", 
+    "Host": "httpbin.org", 
+    "X-Amzn-Trace-Id": "Root=1-634896f7-42432be70a3376de3f10d766"
+  }, 
+  "json": null, 
+  "origin": "142.119.28.61", 
+  "url": "http://httpbin.org/post"
+}
+
