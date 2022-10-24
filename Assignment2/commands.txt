@@ -1,0 +1,5 @@
+GET Methods From Assignment 1
+httpc get http://localhost:8000
+
+Post Methods From Assignment 1
+httpc post http://localhost:8000
