@@ -10,6 +10,7 @@ public class FtpcLibrary {
     private static void printOnConsole(ClientHelper httpcHelper,
                                        ServerResponse serverResponse) throws
             IOException {
+        System.out.println("Server responce :" + serverResponse.getCode());
         if(serverResponse.getCode().equals("404")) {
             System.out.println(serverResponse.getHeaders());
             return;
@@ -213,14 +214,21 @@ public class FtpcLibrary {
                 postHelper.setPostData(postHelper.getPostData().replace("'\"", ""));
             }
         } else if (postHelper.isFileSend()) {
-            File dataFile = new File(postHelper.getFileSendPath());
-            BufferedReader fileReader = new BufferedReader(new FileReader(dataFile));
-            String tempFileData;
-            while ((tempFileData = fileReader.readLine()) != null) {
-                fileData.append(tempFileData);
+            try{
+                File dataFile = new File(postHelper.getFileSendPath());
+                BufferedReader fileReader = new BufferedReader(new FileReader(dataFile));
+                String tempFileData;
+                while ((tempFileData = fileReader.readLine()) != null) {
+                    fileData.append(tempFileData);
+                }
+                postHelper.setPostData(fileData.toString());
+                fileReader.close();
             }
-            postHelper.setPostData(fileData.toString());
-            fileReader.close();
+            catch (Exception e){
+                System.out.println("Enter Correct File");
+                return;
+            }
+
         }
 
         ObjectOutputStream outputStream = new ObjectOutputStream(socket.getOutputStream());

@@ -1,16 +1,38 @@
-GET Methods From Assignment 1
-httpc get http://localhost:8000
-
-Post Methods From Assignment 1
-httpc post http://localhost:8000
-
 
 httpfs get http://localhost:8080
+
 httpfs get -h Content-Type:text/json http://localhost:8080
 httpfs get -h Content-Type:text/java http://localhost:8080
 httpfs get -h Content-Type:text/txt http://localhost:8080
-httpfs get -v http://localhost:8080/demo23.txt
 httpfs get -v http://localhost:8080/test.txt
 httpfs get -v http://localhost:8080/../results.txt
 httpfs get -v http://localhost:8080//Users/smitpateliya/COMP6461/COMP6461Assignments/Assignment2/commands.txt
+
 httpfs post -v -d {A2:40202779} http://localhost:8080/test.txt
+httpfs post -v -f demo.json http://localhost:8080/xyz.txt
+httpfs post -v -h append:true -f demo.json http://localhost:8080/xyz.txt
+
+-------:Assignment1 Command:---------
+
+    ******** post **********
+// header and verbose
+httpc post -v -h ID:1111 http://localhost:8080/post
+
+//data using inline
+httpc post -v -d '{A1:402200}' http://localhost:8080/post
+httpc post -v -h ID:1111 -d '{A1:402200}' http://localhost:8080/post
+
+//data USING FILE
+httpc post -v -f demo.json -o test.txt http://localhost:8080/post
+
+//both together
+httpc post -d '{A1:402200}' -f fileData.json http://localhost:8080/post
+
+
+    ******* get ********
+
+httpc get -v -h ID1:40202779 -h ID2:40200503 http://localhost:8080
+httpc get http://localhost:8080?course=networking&assignment=1
+httpc get -v http://localhost:8080?course=networking&assignment=1
+httpc get -v -o printFile.txt http://localhost:8080?course=networking&assignment=1
+httpc get -v -h ID1:40202779 -h ID2:40200503 http://localhost:8080/get?course=networking&assignment=1

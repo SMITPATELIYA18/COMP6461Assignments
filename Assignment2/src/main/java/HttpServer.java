@@ -321,7 +321,7 @@ public class HttpServer {
                 printWriter.close();
             }
         }
-        serverResponse.setCode("203");
+        serverResponse.setCode("201");
         serverResponse.setHeaders(createHeaders(ServerHelper.FileOverwrittenStatusCode));
     }
 
