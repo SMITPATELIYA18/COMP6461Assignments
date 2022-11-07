@@ -10,7 +10,7 @@ import java.util.HashMap;
 /**
  * This is a helper class for HttpcLibrary class.
  */
-public class HttpcHelper implements Serializable {
+public class ClientHelper implements Serializable {
     private String commandName;
     private String requestMethod;
     private String requestURL;
@@ -72,6 +72,10 @@ public class HttpcHelper implements Serializable {
         return postData;
     }
 
+    public void setPostData(String postData) {
+        this.postData = postData;
+    }
+
     public String getFileSendPath() {
         return fileSendPath;
     }
@@ -106,10 +110,6 @@ public class HttpcHelper implements Serializable {
 
     public boolean isInlineData() {
         return isInlineData;
-    }
-
-    public void setPostData(String postData) {
-        this.postData = postData;
     }
 
     public void setInlineData(boolean inlineData) {

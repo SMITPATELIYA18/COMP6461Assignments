@@ -3,3 +3,14 @@ httpc get http://localhost:8000
 
 Post Methods From Assignment 1
 httpc post http://localhost:8000
+
+
+httpfs get http://localhost:8080
+httpfs get -h Content-Type:text/json http://localhost:8080
+httpfs get -h Content-Type:text/java http://localhost:8080
+httpfs get -h Content-Type:text/txt http://localhost:8080
+httpfs get -v http://localhost:8080/demo23.txt
+httpfs get -v http://localhost:8080/test.txt
+httpfs get -v http://localhost:8080/../results.txt
+httpfs get -v http://localhost:8080//Users/smitpateliya/COMP6461/COMP6461Assignments/Assignment2/commands.txt
+httpfs post -v -d {A2:40202779} http://localhost:8080/test.txt

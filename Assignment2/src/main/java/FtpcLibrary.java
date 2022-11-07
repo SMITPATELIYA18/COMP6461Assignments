@@ -1,66 +1,112 @@
 import java.io.*;
 import java.net.*;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class FtpcLibrary {
-	private final String NewLineCharacter = "\r\n";
-	
-	public void get(List<String> parameters) throws IOException, ClassNotFoundException {
-	HttpcHelper getHelper = new HttpcHelper();
-	getHelper.setCommandName(Ftpc.HTTPFS);
-	getHelper.setRequestMethod("get");
-	for(int i =2; i<parameters.size();i++) {
-		if(parameters.get(i).equals("-v")) {
-			 getHelper.setVerbosePreset(true);
-		}
-		else if(parameters.get(i).equals("-h")) {
-			 HashMap<String, String> headerValue = getHelper.getHeaderValue();
-             if (!parameters.get(i + 1).contains(":")) {
-                 System.out.println("did not enter one or more correct 'Headers'.");
-                 System.out.println();
-                 return;
-             }
-             String[] headerValues = parameters.get(i + 1).split(":");
-             headerValue.put(headerValues[0], headerValues[1]);
-             getHelper.setHttpHeader(true);
-             getHelper.setHeaderValue(headerValue);
-             i++;
-		}
-		else if( parameters.get(i).startsWith("http://") || parameters.get(i).startsWith("https://")) {
-			getHelper.setRequestURL(parameters.get(i));
-			
-		}
-		else if(parameters.get(i).equals("-o")) {
-			 getHelper.setFileWrite(true);
-             getHelper.setFileWritePath(parameters.get(i + 1));
-             i++;
-		}
-		else {
-			System.out.println("Could Not Find an Option or FLag \"" + parameters.get(i) +
-                    "\"");
-            System.out.println();
+    private final String NewLineCharacter = "\r\n";
+
+    private static void printOnConsole(ClientHelper httpcHelper,
+                                       ServerResponse serverResponse) throws
+            IOException {
+        if(serverResponse.getCode().equals("404")) {
+            System.out.println(serverResponse.getHeaders());
             return;
-		}
-		URI uri;
-		
-		try {
-            uri = new URI(getHelper.getRequestURL());
+        }
+        if (httpcHelper.isVerbosePreset()) {
+            System.out.println(serverResponse.getHeaders());
+            System.out.println(serverResponse.getBody());
+        } else {
+            System.out.println(serverResponse.getBody());
+        }
+    }
+
+    private static void printInFile(ClientHelper getHelper, ServerResponse serverResponse) throws
+            IOException {
+        FileWriter fileWriter = new FileWriter(getHelper.getFileWritePath(), true);
+        BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+        PrintWriter printWriter = new PrintWriter(bufferedWriter);
+        String line;
+
+        printWriter.println("Timestamp: " + new Timestamp(System.currentTimeMillis()));
+        printWriter.println();
+
+        if (getHelper.isVerbosePreset()) {
+            //printWriter.println(status);
+            printWriter.println(serverResponse.getHeaders());
+        }
+//	        else {
+//	            while ((line = bufferedReader.readLine()) != null) {
+//	                if (line.equals(""))
+//	                    break;
+//	            }
+//	        }
+//	        while ((line = bufferedReader.readLine()) != null) {
+//	            printWriter.println(line);
+//	        }
+        printWriter.println(serverResponse.getBody());
+        printWriter.println();
+        System.out.println("Response has been written in " + getHelper.getFileWritePath() +
+                ".");
+        printWriter.flush();
+        printWriter.close();
+
+    }
+
+    public void get(List<String> parameters) throws IOException, ClassNotFoundException {
+        ClientHelper clientHelper = new ClientHelper();
+        clientHelper.setCommandName(Ftpc.HTTPFS);
+        clientHelper.setRequestMethod("get");
+//        System.out.println(parameters);
+//        System.out.println(parameters.size());
+        for (int i = 2; i < parameters.size(); i++) {
+//            System.out.println(parameters.get(i) + i);
+            if (parameters.get(i).equals("-v")) {
+                clientHelper.setVerbosePreset(true);
+            } else if (parameters.get(i).equals("-h")) {
+                HashMap<String, String> headerValue = clientHelper.getHeaderValue();
+                if (!parameters.get(i + 1).contains(":")) {
+                    System.out.println("did not enter one or more correct 'Headers'.");
+                    System.out.println();
+                    return;
+                }
+                String[] headerValues = parameters.get(i + 1).split(":");
+                headerValue.put(headerValues[0], headerValues[1]);
+                clientHelper.setHttpHeader(true);
+                clientHelper.setHeaderValue(headerValue);
+                i++;
+            } else if (parameters.get(i).startsWith("http://") || parameters.get(i)
+                    .startsWith("https://")) {
+                clientHelper.setRequestURL(parameters.get(i));
+                System.out.println(clientHelper.getRequestURL());
+            } else if (parameters.get(i).equals("-o")) {
+                clientHelper.setFileWrite(true);
+                clientHelper.setFileWritePath(parameters.get(i + 1));
+                i++;
+            } else {
+                System.out.println("Could Not Find an Option or FLag \"" + parameters.get(i) +
+                        "\"");
+                System.out.println();
+                return;
+            }
+        }
+        URI uri;
+
+        try {
+            uri = new URI(clientHelper.getRequestURL());
         } catch (NullPointerException | URISyntaxException e) {
             System.out.println("Please, Enter correct URL!!");
-            if (getHelper.getRequestURL() == null) {
+            if (clientHelper.getRequestURL() == null) {
                 System.out.println("URL is empty!!");
             } else {
-                System.out.println("You have entered " + getHelper.getRequestURL());
+                System.out.println("You have entered " + clientHelper.getRequestURL());
             }
             System.out.println("PLease, Try again!!!");
             return;
         }
-		
-		String host = uri.getHost();
+
+        String host = uri.getHost();
         Socket socket;
         try {
             socket = new Socket(host, uri.getPort());
@@ -71,30 +117,29 @@ public class FtpcLibrary {
             System.out.println("Connection Refused. Please check URL!!");
             return;
         }
-        
+
         ObjectOutputStream outputStream = new ObjectOutputStream(socket.getOutputStream());
-        outputStream.writeObject(getHelper);
+        outputStream.writeObject(clientHelper);
         ObjectInputStream inputStream = new ObjectInputStream(socket.getInputStream());
         ServerResponse serverResponse = (ServerResponse) inputStream.readObject();
-        
-        if (getHelper.isFileWrite()) {
-            printInFile(getHelper, serverResponse);
+        System.out.println(serverResponse);
+        if (clientHelper.isFileWrite()) {
+            printInFile(clientHelper, serverResponse);
         } else {
-            printOnConsole(getHelper, serverResponse);
+            printOnConsole(clientHelper, serverResponse);
         }
-		
-	}
-	}
-	
-	public void post(List<String> parameters) throws IOException, ClassNotFoundException {
+    }
+
+    public void post(List<String> parameters) throws IOException, ClassNotFoundException {
         StringBuilder fileData = null;
-        HttpcHelper postHelper = new HttpcHelper();
-        postHelper.setCommandName(Httpc.HTTPC);
+        ClientHelper postHelper = new ClientHelper();
+        postHelper.setCommandName(Ftpc.HTTPFS);
         postHelper.setRequestMethod("post");
         if (parameters.contains("-d") && parameters.contains("-f")) {
             System.out.println("Have entered '-d' and '-f in a command.'");
             System.out.println();
-            System.out.println("Run 'httpc help or httpc help <Command>' for available " +"httpc commands and options.");
+            System.out.println("Run 'httpc help or httpc help <Command>' for available " +
+                    "httpc commands and options.");
             return;
         }
         for (int i = 2; i < parameters.size(); i++) {
@@ -155,64 +200,41 @@ public class FtpcLibrary {
         } catch (UnknownHostException e) {
             System.out.println("Host is not found. " + host);
             return;
-        }  catch (ConnectException e) {
+        } catch (ConnectException e) {
             System.out.println("Connection Refused. Please check URL!!");
             return;
+        }
+
+        if (postHelper.isInlineData()) {
+            if (postHelper.getPostData().contains("'")) {
+                postHelper.setPostData(postHelper.getPostData().replace("'", ""));
+            }
+            if (postHelper.getPostData().equals("\"")) {
+                postHelper.setPostData(postHelper.getPostData().replace("'\"", ""));
+            }
+        } else if (postHelper.isFileSend()) {
+            File dataFile = new File(postHelper.getFileSendPath());
+            BufferedReader fileReader = new BufferedReader(new FileReader(dataFile));
+            String tempFileData;
+            while ((tempFileData = fileReader.readLine()) != null) {
+                fileData.append(tempFileData);
+            }
+            postHelper.setPostData(fileData.toString());
+            fileReader.close();
         }
 
         ObjectOutputStream outputStream = new ObjectOutputStream(socket.getOutputStream());
         outputStream.writeObject(postHelper);
         ObjectInputStream inputStream = new ObjectInputStream(socket.getInputStream());
         ServerResponse serverResponse = (ServerResponse) inputStream.readObject();
-        
-        
+
+
         if (postHelper.isFileWrite()) {
             printInFile(postHelper, serverResponse);
         } else {
             printOnConsole(postHelper, serverResponse);
         }
-	}
-	
-	private static void printOnConsole(HttpcHelper httpcHelper,ServerResponse serverResponse) throws IOException {
-        if(httpcHelper.isVerbosePreset()) {
-            System.out.println(serverResponse.getHeaders());
-            System.out.println(serverResponse.getBody());
-        } else {
-            System.out.println(serverResponse.getBody());
-        }
-	}
-
-	
-	 private static void printInFile(HttpcHelper getHelper, ServerResponse serverResponse) throws IOException {
-	        FileWriter fileWriter = new FileWriter(getHelper.getFileWritePath(), true);
-	        BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
-	        PrintWriter printWriter = new PrintWriter(bufferedWriter);
-	        String line;
-
-	        printWriter.println("Timestamp: " + new Timestamp(System.currentTimeMillis()));
-	        printWriter.println();
-
-	        if (getHelper.isVerbosePreset()) {
-	            //printWriter.println(status);
-	            printWriter.println(serverResponse.getHeaders());
-	        }
-//	        else {
-//	            while ((line = bufferedReader.readLine()) != null) {
-//	                if (line.equals(""))
-//	                    break;
-//	            }
-//	        }
-//	        while ((line = bufferedReader.readLine()) != null) {
-//	            printWriter.println(line);
-//	        }
-	        printWriter.println(serverResponse.getBody());
-	        printWriter.println();
-	        System.out.println("Response has been written in " + getHelper.getFileWritePath() +
-	                ".");
-	        printWriter.flush();
-	        printWriter.close();
-
-	    }
+    }
 
 
 }

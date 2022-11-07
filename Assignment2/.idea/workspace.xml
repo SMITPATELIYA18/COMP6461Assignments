@@ -5,18 +5,20 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a0d58ffb-518c-4c44-b462-4e900b15bad0" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Comp6461-F22_LA2.pdf" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/commands.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/demo.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/HttpServer.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/Httpc.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/HttpcHelper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/HttpcLibrary.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/ServerHelper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/ServerResponse.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Assignment1/command.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../Assignment1/command.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/FTPServer/demo1.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/FTPServer/demo1.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/FTPServer/demo1.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/FTPServer/demo2.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/FTPServer/test.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/commands.txt" beforeDir="false" afterPath="$PROJECT_DIR$/commands.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Ftpc.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Ftpc.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/FtpcLibrary.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/FtpcLibrary.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/HttpServer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/HttpServer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/HttpcHelper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ClientHelper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/HttpcLibrary.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/HttpcLibrary.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -42,22 +44,29 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">
-    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
-    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
-    <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/main/java" />
-  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "WebServerToolWindowFactoryState": "false"
+  }
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/src/main/java" />
     </key>
   </component>
   <component name="RunManager" selected="Application.HttpServer">
+    <configuration name="Ftpc" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="Ftpc" />
+      <module name="Assignment2" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="HttpServer" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="HttpServer" />
       <module name="Assignment2" />
-      <option name="PROGRAM_PARAMETERS" value="-v" />
+      <option name="PROGRAM_PARAMETERS" value="-v -p 8080" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -70,11 +79,13 @@
       </method>
     </configuration>
     <list>
+      <item itemvalue="Application.Ftpc" />
       <item itemvalue="Application.Httpc" />
       <item itemvalue="Application.HttpServer" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.Ftpc" />
         <item itemvalue="Application.HttpServer" />
         <item itemvalue="Application.Httpc" />
       </list>
@@ -89,7 +100,8 @@
       <option name="presentableId" value="Default" />
       <updated>1665271372896</updated>
       <workItem from="1665271374197" duration="137000" />
-      <workItem from="1666547669525" duration="12991000" />
+      <workItem from="1666547669525" duration="13590000" />
+      <workItem from="1667683580578" duration="21393000" />
     </task>
     <servers />
   </component>

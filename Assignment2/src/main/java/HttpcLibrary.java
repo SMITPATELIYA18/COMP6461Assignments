@@ -7,10 +7,8 @@
 import java.io.*;
 import java.net.*;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * This class is Httpc library class.
@@ -37,8 +35,10 @@ public class HttpcLibrary {
      * @param getHelper      Helper object from Get or Post method
      * @throws IOException throws if there is an error in file reading or writing
      */
-    private static void printOnConsole(HttpcHelper httpcHelper,ServerResponse serverResponse) throws IOException {
-        if(httpcHelper.isVerbosePreset()) {
+    private static void printOnConsole(ClientHelper clientHelper,
+                                       ServerResponse serverResponse) throws
+            IOException {
+        if (clientHelper.isVerbosePreset()) {
             System.out.println(serverResponse.getHeaders());
             System.out.println(serverResponse.getBody());
         } else {
@@ -67,7 +67,8 @@ public class HttpcLibrary {
      * @param getHelper      Helper object from Get or Post method
      * @throws IOException throws if there is an error in file reading or writing
      */
-    private static void printInFile(HttpcHelper getHelper, ServerResponse serverResponse) throws IOException {
+    private static void printInFile(ClientHelper getHelper, ServerResponse serverResponse) throws
+            IOException {
         FileWriter fileWriter = new FileWriter(getHelper.getFileWritePath(), true);
         BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
         PrintWriter printWriter = new PrintWriter(bufferedWriter);
@@ -156,7 +157,7 @@ public class HttpcLibrary {
      * @throws IOException throws if there is an error in file reading or writing
      */
     public void get(List<String> parameters) throws IOException, ClassNotFoundException {
-        HttpcHelper getHelper = new HttpcHelper();
+        ClientHelper getHelper = new ClientHelper();
         getHelper.setCommandName(Httpc.HTTPC);
         getHelper.setRequestMethod("get");
         for (int i = 2; i < parameters.size(); i++) {
@@ -303,7 +304,7 @@ public class HttpcLibrary {
      */
     public void post(List<String> parameters) throws IOException, ClassNotFoundException {
         StringBuilder fileData = null;
-        HttpcHelper postHelper = new HttpcHelper();
+        ClientHelper postHelper = new ClientHelper();
         postHelper.setCommandName(Httpc.HTTPC);
         postHelper.setRequestMethod("post");
         if (parameters.contains("-d") && parameters.contains("-f")) {
@@ -377,7 +378,7 @@ public class HttpcLibrary {
         } catch (UnknownHostException e) {
             System.out.println("Host is not found. " + host);
             return;
-        }  catch (ConnectException e) {
+        } catch (ConnectException e) {
             System.out.println("Connection Refused. Please check URL!!");
             return;
         }
@@ -387,6 +388,24 @@ public class HttpcLibrary {
 //        } else {
 //            postPath = "/";
 //        }
+
+        if (postHelper.isInlineData()) {
+            if (postHelper.getPostData().contains("'")) {
+                postHelper.setPostData(postHelper.getPostData().replace("'", ""));
+            }
+            if (postHelper.getPostData().equals("\"")) {
+                postHelper.setPostData(postHelper.getPostData().replace("'\"", ""));
+            }
+        } else if (postHelper.isFileSend()) {
+            File dataFile = new File(postHelper.getFileSendPath());
+            BufferedReader fileReader = new BufferedReader(new FileReader(dataFile));
+            String tempFileData;
+            while ((tempFileData = fileReader.readLine()) != null) {
+                fileData.append(tempFileData);
+            }
+            postHelper.setPostData(fileData.toString());
+            fileReader.close();
+        }
 
         ObjectOutputStream outputStream = new ObjectOutputStream(socket.getOutputStream());
         outputStream.writeObject(postHelper);
