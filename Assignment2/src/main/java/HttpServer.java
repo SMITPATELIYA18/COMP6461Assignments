@@ -7,11 +7,12 @@ import java.util.*;
 public class HttpServer {
     public static void main(String[] args) throws IOException {
         ServerHelper serverHelper = new ServerHelper();
+        String dir = "C:\\Users\\Shree\\Desktop\\COMP6461_A1\\COMP6461Assignments\\Assignment2\\FTPServer\\";
+        String smit_dir = "/Users/smitpateliya/COMP6461/COMP6461Assignments"+"/Assignment2/FTPServer/";
         if (args.length == 0) {
             System.out.println("You have not entered port number, Directory and Debug Flag.");
-            serverHelper.setPort(8000);
-            serverHelper.setDirectory("/Users/smitpateliya/COMP6461/COMP6461Assignments" +
-                    "/Assignment2/FTPServer/");
+            serverHelper.setPort(8080);
+            serverHelper.setDirectory(dir);
             serverHelper.setDebugFlag(false);
             System.out.println("The Port Number is " + serverHelper.getPort());
             System.out.println("The directory is " + serverHelper.getDirectory());
@@ -37,8 +38,7 @@ public class HttpServer {
                 System.out.println("The Port Number is " + serverHelper.getPort());
             }
             if (serverHelper.getDirectory() == null) {
-                serverHelper.setDirectory("/Users/smitpateliya/COMP6461/COMP6461Assignments" +
-                        "/Assignment2/FTPServer/");
+                serverHelper.setDirectory(dir);
                 System.out.println("The directory is " + serverHelper.getDirectory());
             }
         }
