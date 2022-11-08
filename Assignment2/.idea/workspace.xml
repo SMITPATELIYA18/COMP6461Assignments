@@ -4,12 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a0d58ffb-518c-4c44-b462-4e900b15bad0" name="Changes" comment="Added FTP Server">
+    <list default="true" id="a0d58ffb-518c-4c44-b462-4e900b15bad0" name="Changes" comment="Added Changes">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FTPServer/test.txt" beforeDir="false" afterPath="$PROJECT_DIR$/FTPServer/test.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/commands.txt" beforeDir="false" afterPath="$PROJECT_DIR$/commands.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ClientHelper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ClientHelper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Ftpc.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Ftpc.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/FtpcLibrary.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/FtpcLibrary.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/HttpServer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/HttpServer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Httpc.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Httpc.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/HttpcLibrary.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/HttpcLibrary.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ServerHelper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ServerHelper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ServerResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ServerResponse.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -92,7 +96,7 @@
       <updated>1665271372896</updated>
       <workItem from="1665271374197" duration="137000" />
       <workItem from="1666547669525" duration="13590000" />
-      <workItem from="1667683580578" duration="25845000" />
+      <workItem from="1667683580578" duration="26935000" />
     </task>
     <task id="LOCAL-00001" summary="Added FTP Server">
       <created>1667787408751</created>
@@ -101,7 +105,14 @@
       <option name="project" value="LOCAL" />
       <updated>1667787408751</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Added Changes">
+      <created>1667791925730</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1667791925730</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -120,6 +131,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Added FTP Server" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added FTP Server" />
+    <MESSAGE value="Added Changes" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added Changes" />
   </component>
 </project>

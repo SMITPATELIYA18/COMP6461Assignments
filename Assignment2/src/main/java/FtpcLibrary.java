@@ -1,3 +1,8 @@
+//-------------------------------------------------
+// Assignment 2
+// © Smit Pateliya and Raviraj Savaliya
+// Written by: Smit Pateliya (40202779) & Raviraj Savaliya (40200503)
+//-------------------------------------------------
 import java.io.*;
 import java.net.*;
 import java.sql.Timestamp;
@@ -18,24 +23,24 @@ public class FtpcLibrary {
         }
         if(serverResponse.getCode().equals("200")) {
         	System.out.println("The request has succeed.");
-        	System.out.println(serverResponse.getHeaders());
-        	return;
+//        	System.out.println(serverResponse.getHeaders());
+//        	return;
         }
         if(serverResponse.getCode().equals("201")) {
         	System.out.println("The request has succeeded and data is overwrite in requested file.");
-        	System.out.println(serverResponse.getHeaders());
-        	return;
+//        	System.out.println(serverResponse.getHeaders());
+//        	return;
         }
         if(serverResponse.getCode().equals("202")) {
         	System.out.println("The request has been fulfilled and resulted in a new resource being created.");
-        	System.out.println(serverResponse.getHeaders());
-        	return;
+//        	System.out.println(serverResponse.getHeaders());
+//        	return;
         	
         }
         if(serverResponse.getCode().equals("203")) {
         	System.out.println("The request has succeed.");
-        	System.out.println(serverResponse.getHeaders());
-        	return;
+//        	System.out.println(serverResponse.getHeaders());
+//        	return;
         }
         
         if (httpcHelper.isVerbosePreset()) {
@@ -56,21 +61,39 @@ public class FtpcLibrary {
         printWriter.println("Timestamp: " + new Timestamp(System.currentTimeMillis()));
         printWriter.println();
 
-        if (getHelper.isVerbosePreset()) {
-            //printWriter.println(status);
+        if(serverResponse.getCode().equals("404")) {
+            printWriter.println("The server has not found anything matching the Request-URI.");
             printWriter.println(serverResponse.getHeaders());
+            return;
         }
-//	        else {
-//	            while ((line = bufferedReader.readLine()) != null) {
-//	                if (line.equals(""))
-//	                    break;
-//	            }
-//	        }
-//	        while ((line = bufferedReader.readLine()) != null) {
-//	            printWriter.println(line);
-//	        }
-        printWriter.println(serverResponse.getBody());
-        printWriter.println();
+        if(serverResponse.getCode().equals("200")) {
+            printWriter.println("The request has succeed.");
+//        	System.out.println(serverResponse.getHeaders());
+//        	return;
+        }
+        if(serverResponse.getCode().equals("201")) {
+            printWriter.println("The request has succeeded and data is overwrite in requested file.");
+//        	System.out.println(serverResponse.getHeaders());
+//        	return;
+        }
+        if(serverResponse.getCode().equals("202")) {
+            printWriter.println("The request has been fulfilled and resulted in a new resource being created.");
+//        	System.out.println(serverResponse.getHeaders());
+//        	return;
+
+        }
+        if(serverResponse.getCode().equals("203")) {
+            printWriter.println("The request has succeed.");
+//        	System.out.println(serverResponse.getHeaders());
+//        	return;
+        }
+
+        if (getHelper.isVerbosePreset()) {
+            printWriter.println(serverResponse.getHeaders());
+            printWriter.println(serverResponse.getBody());
+        } else {
+            printWriter.println(serverResponse.getBody());
+        }
         System.out.println("Response has been written in " + getHelper.getFileWritePath() +
                 ".");
         printWriter.flush();

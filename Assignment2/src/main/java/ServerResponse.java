@@ -1,3 +1,8 @@
+//-------------------------------------------------
+// Assignment 2
+// © Smit Pateliya and Raviraj Savaliya
+// Written by: Smit Pateliya (40202779) & Raviraj Savaliya (40200503)
+//-------------------------------------------------
 import java.io.Serializable;
 
 public class ServerResponse implements Serializable {
