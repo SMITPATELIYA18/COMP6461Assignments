@@ -3,6 +3,7 @@
 // © Smit Pateliya and Raviraj Savaliya
 // Written by: Smit Pateliya (40202779) & Raviraj Savaliya (40200503)
 //-------------------------------------------------
+
 import java.io.*;
 import java.net.*;
 import java.text.DateFormat;
@@ -12,8 +13,9 @@ import java.util.*;
 public class HttpServer {
     public static void main(String[] args) throws IOException {
         ServerHelper serverHelper = new ServerHelper();
-        String dir = "C:\\Users\\Shree\\Desktop\\COMP6461_A1\\COMP6461Assignments\\Assignment2\\FTPServer\\";
-        String smit_dir = "/Users/smitpateliya/COMP6461/COMP6461Assignments"+"/Assignment2/FTPServer/";
+//        String dir = "C:\\Users\\Shree\\Desktop\\COMP6461_A1\\COMP6461Assignments
+//        \\Assignment2\\FTPServer\\";
+        String dir = "/Users/smitpateliya/COMP6461/COMP6461Assignments/Assignment2/FTPServer/";
         if (args.length == 0) {
             System.out.println("You have not entered port number, Directory and Debug Flag.");
             serverHelper.setPort(8080);
@@ -152,12 +154,13 @@ public class HttpServer {
                 String tempBody = "";
 
                 tempBody += "{\n\t\"args\": {},\n\t\"Headers\": {";
-                if (clientHelper.getRequestMethod()
-                        .equalsIgnoreCase("\\get") && clientHelper.getHeaderValue()
-                        .containsKey("Content-Disposition")) {
-                    tempBody += "\n\t\t\"Content-Disposition\": \"" + clientHelper.getHeaderValue()
-                            .get("Content-Disposition") + "\",";
-                }
+//                if (clientHelper.getRequestMethod()
+//                        .equalsIgnoreCase("get") && clientHelper.getHeaderValue()
+//                        .containsKey("Content-Disposition")) {
+//                    tempBody += "\n\t\t\"Content-Disposition\": \"" + clientHelper
+//                    .getHeaderValue()
+//                            .get("Content-Disposition") + "\",";
+//                }
                 tempBody += "\n\t\t\"Connection\": \"close\",";
                 tempBody += "\n\t\t\"Host\": " + uri.getHost() + "\"\n";
                 tempBody += "\t},\n";
@@ -171,114 +174,169 @@ public class HttpServer {
                             String requestedFileType = clientHelper.getHeaderValue()
                                     .get("Content-Type");
                             for (File file : directoryFiles) {
-//                                System.out.println(file.getName().substring(file.getName().lastIndexOf(".")));
-//                                System.out.println(requestedFileType.substring(requestedFileType.lastIndexOf("/")));
-                                if (file.getName().substring(file.getName().lastIndexOf(".")+1)
-                                        .equalsIgnoreCase(requestedFileType.substring(requestedFileType.lastIndexOf("/")+1))) {
+//                                System.out.println(file.getName().substring(file.getName()
+//                                .lastIndexOf(".")));
+//                                System.out.println(requestedFileType.substring
+//                                (requestedFileType.lastIndexOf("/")));
+                                if (file.getName()
+                                        .substring(file.getName().lastIndexOf(".") + 1)
+                                        .equalsIgnoreCase(requestedFileType.substring(requestedFileType.lastIndexOf("/") + 1))) {
                                     filteredFiles.add(file);
                                 }
                             }
+                            if (filteredFiles.size() == 0) {
+                                serverResponse.setHeaders(createHeaders(ServerHelper.FileNotFoundStatusCode));
+                                serverResponse.setCode("404");
+                            } else {
+                                serverResponse.setCode("200");
+                                serverResponse.setHeaders(createHeaders(ServerHelper.OkStatusCode));
+                            }
                             tempBody = addFilesNameToBody(tempBody, filteredFiles);
                         } else {
+                            if (directoryFiles.size() == 0) {
+                                serverResponse.setHeaders(createHeaders(ServerHelper.FileNotFoundStatusCode));
+                                serverResponse.setCode("404");
+                            } else {
+                                serverResponse.setCode("200");
+                                serverResponse.setHeaders(createHeaders(ServerHelper.OkStatusCode));
+                            }
                             tempBody = addFilesNameToBody(tempBody, directoryFiles);
                         }
-                        serverResponse.setCode("200");
-                        serverResponse.setHeaders(createHeaders(ServerHelper.OkStatusCode));
+//                        serverResponse.setCode("200");
+//                        serverResponse.setHeaders(createHeaders(ServerHelper.OkStatusCode));
                     } else {
                         String requestedFileName = uri.getPath().substring(1);
+                        File requestedFile =
+                                new File(serverHelper.getDirectory() + requestedFileName);
+                        String absolutePath = requestedFile.getCanonicalPath().substring(0,
+                                requestedFile.getCanonicalPath().lastIndexOf("/"));
+                        String tempDirectory = serverHelper.getDirectory().substring(0,
+                                serverHelper.getDirectory().length() - 1);
+//                        System.out.println(absolutePath);
+//                        System.out.println(tempDirectory);
+                        if (absolutePath.equals(tempDirectory)) {
+                            List<File> directoryFiles =
+                                    getFilesFromDirectory(serverHelper.getDirectory());
+                            boolean checkFileExist = false; // True If Exist
+                            File requestedFileObject = null;
+//                            System.out.println(requestedFile.getName());
+                            for (File file : directoryFiles) {
+//                                System.out.println(file.getName());
+                                if (file.getName().equals(requestedFile.getName())) {
+                                    checkFileExist = true;
+                                    requestedFileObject = file;
+                                    break;
+                                }
+                            }
+                            if (!checkFileExist) {
+                                serverResponse.setCode("404");
+                                serverResponse.setHeaders(createHeaders(ServerHelper.FileNotFoundStatusCode));
+                            } else {
+                                BufferedReader bufferedReader =
+                                        new BufferedReader(new FileReader(requestedFileObject));
+                                String tempString, tempData = "";
+                                while ((tempString = bufferedReader.readLine()) != null) {
+                                    tempData += tempString;
+                                }
+                                if (clientHelper.getHeaderValue()
+                                        .containsKey("Content-Disposition")) {
+                                    if (clientHelper.getHeaderValue()
+                                            .get("Content-Disposition")
+                                            .equalsIgnoreCase(
+                                                    "attachment")) {
+                                        serverResponse.setCode("203");
+                                        serverResponse.setBody(tempData);
+                                        serverResponse.setFileName(requestedFileName);
+                                    }
+                                }
+                                serverResponse.setCode("203");
+                                tempBody += "\t\"Data\":\"" + tempData + "\",";
+                                serverResponse.setHeaders(createHeaders(ServerHelper.OkStatusCode));
+                            }
+                        } else {
+                            serverResponse.setCode("404");
+                            serverResponse.setHeaders(createHeaders(ServerHelper.FileNotFoundStatusCode));
+                        }
+
+                    }
+                } else if (clientHelper.getRequestMethod().startsWith("post")) {
+                    String requestedFileName = uri.getPath().substring(1);
+                    File requestedFile =
+                            new File(serverHelper.getDirectory() + requestedFileName);
+                    String absolutePath = requestedFile.getCanonicalPath().substring(0,
+                            requestedFile.getCanonicalPath().lastIndexOf("/"));
+                    String tempDirectory = serverHelper.getDirectory().substring(0,
+                            serverHelper.getDirectory().length() - 1);
+                    if (absolutePath.equals(tempDirectory)) {
                         List<File> directoryFiles =
                                 getFilesFromDirectory(serverHelper.getDirectory());
                         boolean checkFileExist = false; // True If Exist
                         File requestedFileObject = null;
                         for (File file : directoryFiles) {
-                            System.out.println(file.getName());
-                            System.out.println(requestedFileName);
                             if (file.getName().equals(requestedFileName)) {
                                 checkFileExist = true;
                                 requestedFileObject = file;
                                 break;
                             }
                         }
+//                        System.out.println(checkFileExist);
                         if (!checkFileExist) {
-                            serverResponse.setCode("404");
-                            serverResponse.setHeaders(createHeaders(ServerHelper.FileNotFoundStatusCode));
+                            requestedFileObject =
+                                    new File(serverHelper.getDirectory() + "/" + requestedFileName);
+                            synchronized (requestedFileObject) {
+                                requestedFileObject.createNewFile();
+                                if (clientHelper.getPostData() != null) {
+                                    FileWriter fileWriter =
+                                            new FileWriter(requestedFileObject);
+                                    BufferedWriter bufferedWriter =
+                                            new BufferedWriter(fileWriter);
+                                    PrintWriter printWriter = new PrintWriter(bufferedWriter);
+                                    printWriter.write(clientHelper.getPostData());
+                                    printWriter.flush();
+                                    printWriter.close();
+                                }
+                            }
+                            serverResponse.setCode("202");
+                            serverResponse.setHeaders(createHeaders(ServerHelper.NewFileCreatedStatusCode));
                         } else {
-                            BufferedReader bufferedReader =
-                                    new BufferedReader(new FileReader(requestedFileObject));
-                            String tempString, tempData = "";
-                            while ((tempString = bufferedReader.readLine()) != null) {
-                                tempData += tempString;
-                            }
-                            if (clientHelper.getHeaderValue()
-                                    .containsKey("Content-Disposition")) {
-                                if (clientHelper.getHeaderValue().get("Content-Disposition")
+                            if (clientHelper.getHeaderValue().containsKey("overwrite")) {
+                                if (clientHelper.getHeaderValue().get("overwrite")
                                         .equalsIgnoreCase(
-                                                "attachment")) {
-                                    serverResponse.setCode("203");
-                                    serverResponse.setBody(tempData);
-                                    serverResponse.setFileName(requestedFileName);
-                                }
-                            }
-                            serverResponse.setCode("203");
-                            tempBody += "\t\"Data\":\"" + tempData + "\",";
-                            serverResponse.setHeaders(createHeaders(ServerHelper.OkStatusCode));
-                        }
-                    }
-                } else if (clientHelper.getRequestMethod().startsWith("post")) {
-                    String requestedFileName = uri.getPath().substring(1);
-                    List<File> directoryFiles =
-                            getFilesFromDirectory(serverHelper.getDirectory());
-                    boolean checkFileExist = false; // True If Exist
-                    File requestedFileObject = null;
-                    for (File file : directoryFiles) {
-                        if (file.getName().equals(requestedFileName)) {
-                            checkFileExist = true;
-                            requestedFileObject = file;
-                            break;
-                        }
-                    }
-                    System.out.println(checkFileExist);
-                    if (!checkFileExist) {
-                        requestedFileObject =
-                                new File(serverHelper.getDirectory()+"/"+requestedFileName);
-                        synchronized (requestedFileObject) {
-                            requestedFileObject.createNewFile();
-                            if(clientHelper.getPostData()!= null) {
-                                FileWriter fileWriter = new FileWriter(requestedFileObject);
-                                BufferedWriter  bufferedWriter = new BufferedWriter(fileWriter);
-                                PrintWriter printWriter = new PrintWriter(bufferedWriter);
-                                printWriter.write(clientHelper.getPostData());
-                                printWriter.flush();
-                                printWriter.close();
-                            }
-                        }
-                        serverResponse.setCode("202");
-                        serverResponse.setHeaders(createHeaders(ServerHelper.NewFileCreatedStatusCode));
-                    } else {
-                        if(clientHelper.getHeaderValue().containsKey("append")) {
-                            if(clientHelper.getHeaderValue().get("append").equalsIgnoreCase(
-                                    "true")) {
-                                synchronized (requestedFileObject) {
-                                    if(clientHelper.getPostData()!= null) {
-                                        FileWriter fileWriter =
-                                                new FileWriter(requestedFileObject,true);
-                                        BufferedWriter  bufferedWriter = new BufferedWriter(fileWriter);
-                                        PrintWriter printWriter = new PrintWriter(bufferedWriter);
-                                        printWriter.write(clientHelper.getPostData());
-                                        printWriter.flush();
-                                        printWriter.close();
+                                                "true")) {
+                                    synchronized (requestedFileObject) {
+                                        if (clientHelper.getPostData() != null) {
+                                            FileWriter fileWriter =
+                                                    new FileWriter(requestedFileObject);
+                                            BufferedWriter bufferedWriter =
+                                                    new BufferedWriter(fileWriter);
+                                            PrintWriter printWriter =
+                                                    new PrintWriter(bufferedWriter);
+                                            printWriter.write(clientHelper.getPostData());
+                                            printWriter.flush();
+                                            printWriter.close();
+                                        }
                                     }
+                                    serverResponse.setCode("201");
+                                    serverResponse.setHeaders(createHeaders(ServerHelper.FileOverwrittenStatusCode));
+                                } else {
+//                                    synchronized (requestedFileObject) {
+//
+//                                    }
+//                                    addDataToFile(serverResponse, clientHelper,
+//                                            requestedFileObject);
+                                    serverResponse.setCode("201");
+                                    serverResponse.setHeaders(createHeaders(ServerHelper.FileOverwrittenStatusCode));
                                 }
-                                serverResponse.setCode("201");
-                                serverResponse.setHeaders(createHeaders(ServerHelper.FileOverwrittenStatusCode));
                             } else {
                                 addDataToFile(serverResponse, clientHelper,
                                         requestedFileObject);
                             }
-                        } else {
-                            addDataToFile(serverResponse, clientHelper, requestedFileObject);
                         }
+                    } else {
+                        serverResponse.setHeaders(createHeaders(ServerHelper.FileNotFoundStatusCode));
+                        serverResponse.setCode("404");
                     }
+
                 }
                 tempBody += "\n\t\"origin\": \"" + InetAddress.getLocalHost()
                         .getHostAddress() + "\",\n";
@@ -297,8 +355,8 @@ public class HttpServer {
     }
 
     private static String addFilesNameToBody(String tempBody, List<File> directoryFiles) {
-        if(directoryFiles.size() == 0) {
-            tempBody+="},";
+        if (directoryFiles.size() == 0) {
+            tempBody += "},";
         }
         for (int i = 0; i < directoryFiles.size(); i++) {
             if (i != directoryFiles.size() - 1) {
@@ -314,10 +372,11 @@ public class HttpServer {
         return tempBody;
     }
 
-    private static void addDataToFile(ServerResponse serverResponse, ClientHelper clientHelper, File requestedFileObject) throws
+    private static void addDataToFile(ServerResponse serverResponse,
+                                      ClientHelper clientHelper, File requestedFileObject) throws
             IOException {
         synchronized (requestedFileObject) {
-            if(clientHelper.getPostData()!= null) {
+            if (clientHelper.getPostData() != null) {
                 FileWriter fileWriter = new FileWriter(requestedFileObject);
                 BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
                 PrintWriter printWriter = new PrintWriter(bufferedWriter);

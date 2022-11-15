@@ -3,6 +3,7 @@
 // © Smit Pateliya and Raviraj Savaliya
 // Written by: Smit Pateliya (40202779) & Raviraj Savaliya (40200503)
 //-------------------------------------------------
+
 import java.io.*;
 import java.net.*;
 import java.sql.Timestamp;
@@ -16,33 +17,35 @@ public class FtpcLibrary {
                                        ServerResponse serverResponse) throws
             IOException {
         //System.out.println("Server responce :" + serverResponse.getCode());
-        if(serverResponse.getCode().equals("404")) {
-        	System.out.println("The server has not found anything matching the Request-URI.");
+        if (serverResponse.getCode().equals("404")) {
+            System.out.println("The server has not found anything matching the Request-URI.");
             System.out.println(serverResponse.getHeaders());
             return;
         }
-        if(serverResponse.getCode().equals("200")) {
-        	System.out.println("The request has succeed.");
+        if (serverResponse.getCode().equals("200")) {
+            System.out.println("The request has succeed.");
 //        	System.out.println(serverResponse.getHeaders());
 //        	return;
         }
-        if(serverResponse.getCode().equals("201")) {
-        	System.out.println("The request has succeeded and data is overwrite in requested file.");
+        if (serverResponse.getCode().equals("201")) {
+            System.out.println("The request has succeeded and data is overwrite in requested" +
+                    " file.");
 //        	System.out.println(serverResponse.getHeaders());
 //        	return;
         }
-        if(serverResponse.getCode().equals("202")) {
-        	System.out.println("The request has been fulfilled and resulted in a new resource being created.");
+        if (serverResponse.getCode().equals("202")) {
+            System.out.println("The request has been fulfilled and resulted in a new " +
+                    "resource being created.");
 //        	System.out.println(serverResponse.getHeaders());
 //        	return;
-        	
+
         }
-        if(serverResponse.getCode().equals("203")) {
-        	System.out.println("The request has succeed.");
+        if (serverResponse.getCode().equals("203")) {
+            System.out.println("The request has succeed.");
 //        	System.out.println(serverResponse.getHeaders());
 //        	return;
         }
-        
+
         if (httpcHelper.isVerbosePreset()) {
             System.out.println(serverResponse.getHeaders());
             System.out.println(serverResponse.getBody());
@@ -61,28 +64,30 @@ public class FtpcLibrary {
         printWriter.println("Timestamp: " + new Timestamp(System.currentTimeMillis()));
         printWriter.println();
 
-        if(serverResponse.getCode().equals("404")) {
+        if (serverResponse.getCode().equals("404")) {
             printWriter.println("The server has not found anything matching the Request-URI.");
             printWriter.println(serverResponse.getHeaders());
             return;
         }
-        if(serverResponse.getCode().equals("200")) {
+        if (serverResponse.getCode().equals("200")) {
             printWriter.println("The request has succeed.");
 //        	System.out.println(serverResponse.getHeaders());
 //        	return;
         }
-        if(serverResponse.getCode().equals("201")) {
-            printWriter.println("The request has succeeded and data is overwrite in requested file.");
+        if (serverResponse.getCode().equals("201")) {
+            printWriter.println("The request has succeeded and data is overwrite in " +
+                    "requested file.");
 //        	System.out.println(serverResponse.getHeaders());
 //        	return;
         }
-        if(serverResponse.getCode().equals("202")) {
-            printWriter.println("The request has been fulfilled and resulted in a new resource being created.");
+        if (serverResponse.getCode().equals("202")) {
+            printWriter.println("The request has been fulfilled and resulted in a new " +
+                    "resource being created.");
 //        	System.out.println(serverResponse.getHeaders());
 //        	return;
 
         }
-        if(serverResponse.getCode().equals("203")) {
+        if (serverResponse.getCode().equals("203")) {
             printWriter.println("The request has succeed.");
 //        	System.out.println(serverResponse.getHeaders());
 //        	return;
@@ -126,7 +131,7 @@ public class FtpcLibrary {
             } else if (parameters.get(i).startsWith("http://") || parameters.get(i)
                     .startsWith("https://")) {
                 clientHelper.setRequestURL(parameters.get(i));
-             //   System.out.println(clientHelper.getRequestURL());
+                //   System.out.println(clientHelper.getRequestURL());
             } else if (parameters.get(i).equals("-o")) {
                 clientHelper.setFileWrite(true);
                 clientHelper.setFileWritePath(parameters.get(i + 1));
@@ -169,7 +174,7 @@ public class FtpcLibrary {
         outputStream.writeObject(clientHelper);
         ObjectInputStream inputStream = new ObjectInputStream(socket.getInputStream());
         ServerResponse serverResponse = (ServerResponse) inputStream.readObject();
-       // System.out.println(serverResponse);
+        // System.out.println(serverResponse);
         if (clientHelper.isFileWrite()) {
             printInFile(clientHelper, serverResponse);
         } else {
@@ -260,7 +265,7 @@ public class FtpcLibrary {
                 postHelper.setPostData(postHelper.getPostData().replace("'\"", ""));
             }
         } else if (postHelper.isFileSend()) {
-            try{
+            try {
                 File dataFile = new File(postHelper.getFileSendPath());
                 BufferedReader fileReader = new BufferedReader(new FileReader(dataFile));
                 String tempFileData;
@@ -269,8 +274,7 @@ public class FtpcLibrary {
                 }
                 postHelper.setPostData(fileData.toString());
                 fileReader.close();
-            }
-            catch (Exception e){
+            } catch (Exception e) {
                 System.out.println("Enter Correct File");
                 return;
             }
