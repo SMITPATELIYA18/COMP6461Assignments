@@ -1,0 +1,17 @@
+Timestamp: 2022-11-05 20:26:37.23
+
+{
+	"args": {},
+	"data":"'{"Assignment":1}'",
+	"files": {},
+	"form": {},
+	"headers": {
+		"Content-Type":"application/json",
+		"Content-Length": "18",
+		"Host": "localhost"
+	},
+	"json": null,
+	"origin": "127.0.0.1",
+	"url": "http://localhost:8080/post?course=networking&assignment=1"
+}
+

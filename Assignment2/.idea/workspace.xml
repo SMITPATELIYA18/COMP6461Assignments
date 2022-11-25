@@ -5,27 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a0d58ffb-518c-4c44-b462-4e900b15bad0" name="Changes" comment="Final Changes">
-      <change afterPath="$PROJECT_DIR$/FTPServer/Test/Smit.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Assignment3/.idea/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Assignment3/.idea/checkstyle-idea.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Assignment3/.idea/compiler.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Assignment3/.idea/encodings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Assignment3/.idea/jarRepositories.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Assignment3/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Assignment3/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Assignment3/pom.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Assignment3/src/main/resources/META-INF/maven/archetype.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Assignment3/src/main/resources/archetype-resources/pom.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Assignment3/src/main/resources/archetype-resources/src/main/java/App.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Assignment3/src/main/resources/archetype-resources/src/test/java/AppTest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FTPServer/test.txt" beforeDir="false" afterPath="$PROJECT_DIR$/FTPServer/test.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/commands.txt" beforeDir="false" afterPath="$PROJECT_DIR$/commands.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Ftpc.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Ftpc.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/FtpcLibrary.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/FtpcLibrary.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/HttpServer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/HttpServer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ServerHelper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ServerHelper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ServerResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ServerResponse.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -66,7 +47,7 @@
     </key>
   </component>
   <component name="RunManager" selected="Compound.Assignment2">
-    <configuration name="Ftpc" type="Application" factoryName="Application" nameIsGenerated="true">
+    <configuration name="Ftpc" type="Application" factoryName="Application" singleton="false" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="Ftpc" />
       <module name="Assignment2" />
       <method v="2">
@@ -117,7 +98,8 @@
       <workItem from="1668360762487" duration="114000" />
       <workItem from="1668381468652" duration="671000" />
       <workItem from="1668387154648" duration="1561000" />
-      <workItem from="1668474114467" duration="1365000" />
+      <workItem from="1668474114467" duration="3890000" />
+      <workItem from="1669336204232" duration="14000" />
     </task>
     <task id="LOCAL-00001" summary="Added FTP Server">
       <created>1667787408751</created>
@@ -140,7 +122,14 @@
       <option name="project" value="LOCAL" />
       <updated>1667866301059</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Final Changes">
+      <created>1668521596576</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1668521596576</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
