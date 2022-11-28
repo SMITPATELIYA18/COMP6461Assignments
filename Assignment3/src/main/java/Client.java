@@ -1,14 +1,32 @@
+import static java.nio.channels.SelectionKey.OP_READ;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
+import java.nio.ByteBuffer;
+import java.nio.channels.DatagramChannel;
+import java.nio.channels.SelectionKey;
+import java.nio.channels.Selector;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
+import java.util.Set;
 
 public class Client {
     public final String HTTPFS = "httpfs";
+    public final String router_host = "localhost";
+    public final int router_port = 3000;
+	public static long sequenceNum = 0;
+	public static List<Long> receivedPackets = new ArrayList<>();
+	public static int timeout = 3000;
+	public static int ackCount = 0;
+
     public static void main(String[] args) {
         Client client = new Client();
         String input;
@@ -99,5 +117,66 @@ public class Client {
             }
         }
         query = query.trim();
+        
+        String server_host = new URL(query).getHost();
+        int server_port = new URL(query).getPort();
+        
+		SocketAddress routerAddress = new InetSocketAddress(router_host, router_port);
+		InetSocketAddress serverAddress = new InetSocketAddress(server_host, server_port);
+		Handshake(routerAddress, serverAddress);
     }
+    
+    private static void Handshake(SocketAddress routerAddress, InetSocketAddress serverAddress) {
+    	if(DatagramChannel channel = DatagramChannel.open()) {
+    		String msg = "Hello";
+    		sequenceNum++;
+			Packet p = new Packet.Builder().setType(0).setSequenceNumber(sequenceNum)
+					.setPortNumber(serverAddress.getPort()).setPeerAddress(serverAddress.getAddress())
+					.setPayload(msg.getBytes()).create();
+			channel.send(p.toBuffer(), routerAddress);
+			
+			channel.configureBlocking(false);
+			Selector selector = Selector.open();
+			channel.register(selector, OP_READ);
+
+			selector.select(timeout);
+
+			Set<SelectionKey> keys = selector.selectedKeys();
+			if (keys.isEmpty()) {
+				System.out.println("No response after timeout\nSending again");
+				resend(channel, p, routerAddress);
+			}
+
+			ByteBuffer buf = ByteBuffer.allocate(Packet.MAX_LEN);
+			Packet resp = Packet.fromBuffer(buf);
+			String payload = new String(resp.getPayload(), StandardCharsets.UTF_8);
+			System.out.println(payload + " received..!");
+			receivedPackets.add(resp.getSequenceNumber());
+			keys.clear();
+    	}
+    }
+    
+    private static void resend(DatagramChannel channel, Packet p, SocketAddress routerAddress) throws IOException {
+		channel.send(p.toBuffer(), routerAddress);
+		System.out.println(new String(p.getPayload()));
+		if (new String(p.getPayload()).equals("Received")) {
+			ackCount++;
+		}
+
+		channel.configureBlocking(false);
+		Selector selector = Selector.open();
+		channel.register(selector, OP_READ);
+		selector.select(timeout);
+
+		Set<SelectionKey> keys = selector.selectedKeys();
+		if (keys.isEmpty() && ackCount < 10) {
+
+			System.out.println("No response after timeout\nSending again");
+			resend(channel, p, routerAddress);
+
+		} else {
+			return;
+		}
+	}
+    
 }
