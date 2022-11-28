@@ -50,8 +50,15 @@ public class Server {
                 System.out.println("The directory is " + serverHelper.getDirectory());
             }
         }
-
-        new Server().requestServer(serverHelper);
+        Server server = new Server();
+//        ClientQueryHelper clientQueryHelper =server.createQuery("httpfs post -d " +
+//                "{Smit:Pateliya} " +
+//                "http://localhost:8080/xyz.txt");
+//        System.out.println(clientQueryHelper);
+//        String result = server.createResponse(clientQueryHelper,
+//                serverHelper);
+//        System.out.println(result);
+//        new Server().requestServer(serverHelper);
 
     }
 
@@ -204,18 +211,20 @@ public class Server {
         try {
             uri = new URI(clientQueryHelper.getRequestURL());
         } catch (NullPointerException | URISyntaxException e) {
+//            System.out.println("Hello");
             return createHeaders(ServerHelper.FileNotFoundStatusCode);
         }
         try {
-            if (clientQueryHelper.getCommandName().equals("get")) {
+            if (clientQueryHelper.getRequestMethod().equals("get")) {
                 if (uri.getPath().equals("")) {
                     return sendFileList(clientQueryHelper, serverHelper, uri);
                 } else {
                     return sendFileData(clientQueryHelper, serverHelper, uri);
                 }
-            } else if (clientQueryHelper.getCommandName().equals("post")) {
+            } else if (clientQueryHelper.getRequestMethod().equals("post")) {
                 return sendPostResponse(clientQueryHelper, serverHelper, uri);
             } else {
+//                System.out.println("Hello");
                 return createHeaders(ServerHelper.FileNotFoundStatusCode);
             }
         } catch (IOException e) {
@@ -265,7 +274,7 @@ public class Server {
                 .getHostAddress() + "\",\n";
         tempBody += "\t\"url\": \"" + clientQueryHelper.getRequestURL() + "\"\n";
         tempBody += "}";
-        return headers + tempBody;
+        return headers +"\n"+ tempBody;
     }
 
     private String sendFileData(ClientQueryHelper clientQueryHelper,
@@ -275,7 +284,7 @@ public class Server {
         tempBody += "{\n\t\"args\": {},\n\t\"Headers\": {";
         tempBody += "\n\t\t\"Connection\": \"close\",";
         tempBody += "\n\t\t\"Host\": " + uri.getHost() + "\"\n";
-        tempBody += "\t},\n";
+        tempBody += "\t},";
         String requestedFileName = uri.getPath().substring(1);
         File requestedFile =
                 new File(serverHelper.getDirectory() + requestedFileName);
@@ -318,7 +327,7 @@ public class Server {
 //                        serverResponse.setFileName(requestedFileName);
 //                    }
 //                }
-                tempBody += "\t\"Data\":\"" + tempData + "\",";
+                tempBody += "\n\t\"Data\":\"" + tempData + "\",";
                 headers = createHeaders(ServerHelper.OkStatusCode);
             }
         } else {
@@ -328,13 +337,17 @@ public class Server {
                 .getHostAddress() + "\",\n";
         tempBody += "\t\"url\": \"" + clientQueryHelper.getRequestURL() + "\"\n";
         tempBody += "}";
-        return headers + tempBody;
+        return headers +"\n"+ tempBody;
     }
 
     private String sendPostResponse(ClientQueryHelper clientQueryHelper,
                                     ServerHelper serverHelper, URI uri) throws IOException {
         String headers = "";
         String tempBody = "";
+        tempBody += "{\n\t\"args\": {},\n\t\"Headers\": {";
+        tempBody += "\n\t\t\"Connection\": \"close\",";
+        tempBody += "\n\t\t\"Host\": " + uri.getHost() + "\"\n";
+        tempBody += "\t},";
         String requestedFileName = uri.getPath().substring(1);
         File requestedFile =
                 new File(serverHelper.getDirectory() + requestedFileName);
@@ -411,6 +424,6 @@ public class Server {
                 .getHostAddress() + "\",\n";
         tempBody += "\t\"url\": \"" + clientQueryHelper.getRequestURL() + "\"\n";
         tempBody += "}";
-        return headers + tempBody;
+        return headers +"\n"+ tempBody;
     }
 }
