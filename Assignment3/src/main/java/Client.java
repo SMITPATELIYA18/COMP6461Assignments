@@ -123,11 +123,12 @@ public class Client {
         
 		SocketAddress routerAddress = new InetSocketAddress(router_host, router_port);
 		InetSocketAddress serverAddress = new InetSocketAddress(server_host, server_port);
-		Handshake(routerAddress, serverAddress);
+		Handshake(routerAddress, serverAddress);9
+		runClient(routerAddress, serverAddress);
     }
     
     private static void Handshake(SocketAddress routerAddress, InetSocketAddress serverAddress) {
-    	if(DatagramChannel channel = DatagramChannel.open()) {
+    	try(DatagramChannel channel = DatagramChannel.open()) {
     		String msg = "Hello";
     		sequenceNum++;
 			Packet p = new Packet.Builder().setType(0).setSequenceNumber(sequenceNum)
@@ -173,10 +174,98 @@ public class Client {
 
 			System.out.println("No response after timeout\nSending again");
 			resend(channel, p, routerAddress);
-
-		} else {
-			return;
-		}
+			}
 	}
+    
+    private static void runClient(SocketAddress routerAddr, InetSocketAddress serverAddr) throws IOException {
+        try(DatagramChannel channel = DatagramChannel.open()){
+        	sequenceNumber++;
+        	//String msg = "Hello World";
+            Packet p = new Packet.Builder()
+                    .setType(0)
+                    .setSequenceNumber(sequenceNumber)
+                    .setPortNumber(serverAddr.getPort())
+                    .setPeerAddress(serverAddr.getAddress())
+                    .setPayload(msg.getBytes())
+                    .create();
+            channel.send(p.toBuffer(), routerAddr);
+
+            System.out.println("Sending \"{}\" to router at {}", msg, routerAddr);
+
+            // Try to receive a packet within timeout.
+            channel.configureBlocking(false);
+            Selector selector = Selector.open();
+            channel.register(selector, OP_READ);
+            logger.info("Waiting for the response");
+            selector.select(5000);
+
+            Set<SelectionKey> keys = selector.selectedKeys();
+            if(keys.isEmpty()){
+            	System.out.println("No response after timeout");
+                resend(channel,p,routerAddr)
+            }
+
+            // We just want a single response.
+            ByteBuffer buf = ByteBuffer.allocate(Packet.MAX_LEN);
+            SocketAddress router = channel.receive(buf);
+            buf.flip();
+            
+         
+            
+            Packet resp = Packet.fromBuffer(buf);
+            System.out.println("Packet: {}", resp);
+            System.out.println("Router: {}", router);
+            String payload = new String(resp.getPayload(), StandardCharsets.UTF_8);
+            System.out.println("Payload: {}",  payload);
+
+            
+            if (!receivedPackets.contains(response.getSequenceNumber())) {
+
+                receivedPackets.add(response.getSequenceNumber());
+                System.out.println("\nResponse from Server : \n" + payload);
+
+                // Sending ACK for the received of the response
+                sequenceNumber++;
+            	//String msg = "Hello World";
+                Packet Ackp = new Packet.Builder()
+                        .setType(0)
+                        .setSequenceNumber(sequenceNumber)
+                        .setPortNumber(serverAddr.getPort())
+                        .setPeerAddress(serverAddr.getAddress())
+                        .setPayload(msg.getBytes())
+                        .create();
+                channel.send(p.toBuffer(), routerAddr);
+
+                System.out.println("Sending \"{}\" to router at {}", msg, routerAddr);
+
+                // Try to receive a packet within timeout.
+                channel.configureBlocking(false);
+                Selector selector = Selector.open();
+                channel.register(selector, OP_READ);
+                logger.info("Waiting for the response");
+                selector.select(5000);
+
+                Set<SelectionKey> keys = selector.selectedKeys();
+                if(keys.isEmpty()){
+                	System.out.println("No response after timeout");
+                    resend(channel,Ackp,routerAddr)
+                }
+
+                buf.flip();
+
+                System.out.println("Connection closed..!");
+                keys.clear();
+
+                sequenceNumber++;
+                Packet pClose = new Packet.Builder().setType(0).setSequenceNumber(sequenceNumber)
+                        .setPortNumber(serverAddr.getPort()).setPeerAddress(serverAddr.getAddress())
+                        .setPayload("Ok".getBytes()).create();
+                channel.send(pClose.toBuffer(), routerAddr);
+                System.out.println("OK sent");
+            }
+            
+            keys.clear();
+        }
+    }
     
 }
