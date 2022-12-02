@@ -51,6 +51,7 @@ public class Server {
             }
         }
         Server server = new Server();
+        server.requestServer(serverHelper);
 //        ClientQueryHelper clientQueryHelper =server.createQuery("httpfs post -d " +
 //                "{Smit:Pateliya} " +
 //                "http://localhost:8080/xyz.txt");
@@ -274,7 +275,7 @@ public class Server {
                 .getHostAddress() + "\",\n";
         tempBody += "\t\"url\": \"" + clientQueryHelper.getRequestURL() + "\"\n";
         tempBody += "}";
-        return headers +"\n"+ tempBody;
+        return headers + "\n" + tempBody;
     }
 
     private String sendFileData(ClientQueryHelper clientQueryHelper,
@@ -337,7 +338,7 @@ public class Server {
                 .getHostAddress() + "\",\n";
         tempBody += "\t\"url\": \"" + clientQueryHelper.getRequestURL() + "\"\n";
         tempBody += "}";
-        return headers +"\n"+ tempBody;
+        return headers + "\n" + tempBody;
     }
 
     private String sendPostResponse(ClientQueryHelper clientQueryHelper,
@@ -424,6 +425,6 @@ public class Server {
                 .getHostAddress() + "\",\n";
         tempBody += "\t\"url\": \"" + clientQueryHelper.getRequestURL() + "\"\n";
         tempBody += "}";
-        return headers +"\n"+ tempBody;
+        return headers + "\n" + tempBody;
     }
 }

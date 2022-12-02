@@ -1,33 +1,30 @@
-import static java.nio.channels.SelectionKey.OP_READ;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Scanner;
-import java.util.Set;
+import java.util.*;
+
+import static java.nio.channels.SelectionKey.OP_READ;
 
 public class Client {
+    public static List<Long> receivedPackets = new ArrayList<>();
+    public static int timeout = 3000;
+    public static int ackCount = 0;
     public final String HTTPFS = "httpfs";
     public final String router_host = "localhost";
     public final int router_port = 3000;
-	public static long sequenceNum = 0;
-	public static List<Long> receivedPackets = new ArrayList<>();
-	public static int timeout = 3000;
-	public static int ackCount = 0;
+    public long sequenceNum = 0;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException, URISyntaxException {
         Client client = new Client();
         String input;
         if (args.length == 0) {
@@ -44,34 +41,57 @@ public class Client {
             }
             while (flag != 1);
         } else {
-            client.checkCommand(String.join(" ",args));
+            client.checkCommand(String.join(" ", args));
         }
     }
 
-    private void checkCommand(String query) {
+    private static void resend(DatagramChannel channel, Packet p,
+                               SocketAddress routerAddress) throws
+            IOException {
+        channel.send(p.toBuffer(), routerAddress);
+        System.out.println(new String(p.getPayload()));
+        if (new String(p.getPayload()).equals("Received")) {
+            ackCount++;
+        }
+
+        channel.configureBlocking(false);
+        Selector selector = Selector.open();
+        channel.register(selector, OP_READ);
+        selector.select(timeout);
+
+        Set<SelectionKey> keys = selector.selectedKeys();
+        if (keys.isEmpty() && ackCount < 10) {
+
+            System.out.println("No response after timeout\nSending again");
+            resend(channel, p, routerAddress);
+        }
+    }
+
+    private void checkCommand(String query) throws IOException, URISyntaxException {
         List<String> parameters = Arrays.asList(query.split(" "));
-        String url,postData = null;
+        String url = null, postData = null;
         if (parameters.contains("-d") && parameters.contains("-f")) {
             System.out.println("Have entered '-d' and '-f in a command.'");
             System.out.println();
             return;
         }
         for (int i = 0; i < parameters.size(); i++) {
-            if (parameters.get(i).equals(HTTPFS) && i==0) {
+            if (parameters.get(i).equals(HTTPFS) && i == 0) {
 
-            } else if ((parameters.get(i).equals("get") || parameters.get(i).equals("post")) && i==1) {
+            } else if ((parameters.get(i).equals("get") || parameters.get(i)
+                    .equals("post")) && i == 1) {
 
             } else if (parameters.get(i).startsWith("http://")) {
                 url = parameters.get(i);
             } else if (parameters.get(i).equals("-h")) {
-                if (!parameters.get(i+1).contains(":")) {
+                if (!parameters.get(i + 1).contains(":")) {
                     System.out.println("There is problem with 'Headers'");
                     System.out.println();
                     return;
                 }
                 i++;
             } else if (parameters.get(i).equals("-d")) {
-                String tempData = parameters.get(i+1);
+                String tempData = parameters.get(i + 1);
                 if (tempData.contains("'")) {
                     postData = tempData.replace("'", "");
                 }
@@ -82,7 +102,7 @@ public class Client {
             } else if (parameters.get(i).equals("-f")) {
                 StringBuilder fileData = new StringBuilder();
                 try {
-                    File dataFile = new File(parameters.get(i+1));
+                    File dataFile = new File(parameters.get(i + 1));
                     BufferedReader fileReader = new BufferedReader(new FileReader(dataFile));
                     String tempFileData;
                     while ((tempFileData = fileReader.readLine()) != null) {
@@ -100,155 +120,140 @@ public class Client {
                     return;
                 }
                 i++;
+            } else {
+                System.out.println("Error!");
+                return;
             }
         }
         query = "";
         for (int i = 0; i < parameters.size(); i++) {
             if (parameters.get(i).equals("-d")) {
-                query+="-d ";
-                query+= postData+" ";
+                query += "-d ";
+                query += postData + " ";
                 i++;
-            } else if(parameters.get(i).equals("-f")) {
-                query+="-d ";
-                query+= postData+" ";
+            } else if (parameters.get(i).equals("-f")) {
+                query += "-d ";
+                query += postData + " ";
                 i++;
             } else {
-                query+=parameters.get(i)+" ";
+                query += parameters.get(i) + " ";
             }
         }
         query = query.trim();
-        
-        String server_host = new URL(query).getHost();
-        int server_port = new URL(query).getPort();
-        
-		SocketAddress routerAddress = new InetSocketAddress(router_host, router_port);
-		InetSocketAddress serverAddress = new InetSocketAddress(server_host, server_port);
-		Handshake(routerAddress, serverAddress);9
-		runClient(routerAddress, serverAddress);
+
+        String server_host = new URI(url).getHost();
+        int server_port = new URI(url).getPort();
+
+        SocketAddress routerAddress = new InetSocketAddress(router_host, router_port);
+        InetSocketAddress serverAddress = new InetSocketAddress(server_host, server_port);
+        handshake(routerAddress, serverAddress);
+        runClient(routerAddress, serverAddress, query);
     }
-    
-    private static void Handshake(SocketAddress routerAddress, InetSocketAddress serverAddress) {
-    	try(DatagramChannel channel = DatagramChannel.open()) {
-    		String msg = "Hello";
-    		sequenceNum++;
-			Packet p = new Packet.Builder().setType(0).setSequenceNumber(sequenceNum)
-					.setPortNumber(serverAddress.getPort()).setPeerAddress(serverAddress.getAddress())
-					.setPayload(msg.getBytes()).create();
-			channel.send(p.toBuffer(), routerAddress);
-			
-			channel.configureBlocking(false);
-			Selector selector = Selector.open();
-			channel.register(selector, OP_READ);
 
-			selector.select(timeout);
+    private void handshake(SocketAddress routerAddress, InetSocketAddress serverAddress) throws
+            IOException {
+        try (DatagramChannel channel = DatagramChannel.open()) {
+            String msg = "Hi from client";
+            sequenceNum++;
+            Packet p = new Packet.Builder().setType(0).setSequenceNumber(sequenceNum)
+                    .setPortNumber(serverAddress.getPort())
+                    .setPeerAddress(serverAddress.getAddress())
+                    .setPayload(msg.getBytes()).create();
+            channel.send(p.toBuffer(), routerAddress);
 
-			Set<SelectionKey> keys = selector.selectedKeys();
-			if (keys.isEmpty()) {
-				System.out.println("No response after timeout\nSending again");
-				resend(channel, p, routerAddress);
-			}
+            channel.configureBlocking(false);
+            Selector selector = Selector.open();
+            channel.register(selector, OP_READ);
 
-			ByteBuffer buf = ByteBuffer.allocate(Packet.MAX_LEN);
-			Packet resp = Packet.fromBuffer(buf);
-			String payload = new String(resp.getPayload(), StandardCharsets.UTF_8);
-			System.out.println(payload + " received..!");
-			receivedPackets.add(resp.getSequenceNumber());
-			keys.clear();
-    	}
+            selector.select(timeout);
+
+            Set<SelectionKey> keys = selector.selectedKeys();
+            if (keys.isEmpty()) {
+                System.out.println("No response after timeout\nSending again");
+                resend(channel, p, routerAddress);
+            }
+
+            ByteBuffer buf = ByteBuffer.allocate(Packet.MAX_LEN);
+            Packet resp = Packet.fromBuffer(buf);
+            String payload = new String(resp.getPayload(), StandardCharsets.UTF_8);
+            System.out.println(payload + " received..!");
+            receivedPackets.add(resp.getSequenceNumber());
+            keys.clear();
+        }
     }
-    
-    private static void resend(DatagramChannel channel, Packet p, SocketAddress routerAddress) throws IOException {
-		channel.send(p.toBuffer(), routerAddress);
-		System.out.println(new String(p.getPayload()));
-		if (new String(p.getPayload()).equals("Received")) {
-			ackCount++;
-		}
 
-		channel.configureBlocking(false);
-		Selector selector = Selector.open();
-		channel.register(selector, OP_READ);
-		selector.select(timeout);
-
-		Set<SelectionKey> keys = selector.selectedKeys();
-		if (keys.isEmpty() && ackCount < 10) {
-
-			System.out.println("No response after timeout\nSending again");
-			resend(channel, p, routerAddress);
-			}
-	}
-    
-    private static void runClient(SocketAddress routerAddr, InetSocketAddress serverAddr) throws IOException {
-        try(DatagramChannel channel = DatagramChannel.open()){
-        	sequenceNumber++;
-        	//String msg = "Hello World";
+    private void runClient(SocketAddress routerAddr, InetSocketAddress serverAddr,
+                           String msg) throws IOException {
+        try (DatagramChannel channel = DatagramChannel.open()) {
+            sequenceNum++;
+            //String msg = "Hello World";
             Packet p = new Packet.Builder()
                     .setType(0)
-                    .setSequenceNumber(sequenceNumber)
+                    .setSequenceNumber(sequenceNum)
                     .setPortNumber(serverAddr.getPort())
                     .setPeerAddress(serverAddr.getAddress())
                     .setPayload(msg.getBytes())
                     .create();
             channel.send(p.toBuffer(), routerAddr);
 
-            System.out.println("Sending \"{}\" to router at {}", msg, routerAddr);
+            System.out.println("Sending \"" + msg + "\" to router at " + routerAddr);
 
             // Try to receive a packet within timeout.
             channel.configureBlocking(false);
             Selector selector = Selector.open();
             channel.register(selector, OP_READ);
-            logger.info("Waiting for the response");
+            //logger.info("Waiting for the response");
             selector.select(5000);
 
             Set<SelectionKey> keys = selector.selectedKeys();
-            if(keys.isEmpty()){
-            	System.out.println("No response after timeout");
-                resend(channel,p,routerAddr)
+            if (keys.isEmpty()) {
+                System.out.println("No response after timeout");
+                resend(channel, p, routerAddr);
             }
 
             // We just want a single response.
             ByteBuffer buf = ByteBuffer.allocate(Packet.MAX_LEN);
             SocketAddress router = channel.receive(buf);
             buf.flip();
-            
-         
-            
+
+
             Packet resp = Packet.fromBuffer(buf);
-            System.out.println("Packet: {}", resp);
-            System.out.println("Router: {}", router);
+            System.out.println("Packet: " + resp);
+            System.out.println("Router: " + router);
             String payload = new String(resp.getPayload(), StandardCharsets.UTF_8);
-            System.out.println("Payload: {}",  payload);
+            System.out.println("Payload: " + payload);
 
-            
-            if (!receivedPackets.contains(response.getSequenceNumber())) {
 
-                receivedPackets.add(response.getSequenceNumber());
+            if (!receivedPackets.contains(resp.getSequenceNumber())) {
+
+                receivedPackets.add(resp.getSequenceNumber());
                 System.out.println("\nResponse from Server : \n" + payload);
 
                 // Sending ACK for the received of the response
-                sequenceNumber++;
-            	//String msg = "Hello World";
-                Packet Ackp = new Packet.Builder()
+                sequenceNum++;
+                //String msg = "Hello World";
+                Packet ackp = new Packet.Builder()
                         .setType(0)
-                        .setSequenceNumber(sequenceNumber)
+                        .setSequenceNumber(sequenceNum)
                         .setPortNumber(serverAddr.getPort())
                         .setPeerAddress(serverAddr.getAddress())
                         .setPayload(msg.getBytes())
                         .create();
                 channel.send(p.toBuffer(), routerAddr);
 
-                System.out.println("Sending \"{}\" to router at {}", msg, routerAddr);
+                System.out.println("Sending \"" + msg + "\" to router at {}" + routerAddr);
 
                 // Try to receive a packet within timeout.
                 channel.configureBlocking(false);
-                Selector selector = Selector.open();
+                selector = Selector.open();
                 channel.register(selector, OP_READ);
-                logger.info("Waiting for the response");
+                //logger.info("Waiting for the response");
                 selector.select(5000);
 
-                Set<SelectionKey> keys = selector.selectedKeys();
-                if(keys.isEmpty()){
-                	System.out.println("No response after timeout");
-                    resend(channel,Ackp,routerAddr)
+                keys = selector.selectedKeys();
+                if (keys.isEmpty()) {
+                    System.out.println("No response after timeout");
+                    resend(channel, ackp, routerAddr);
                 }
 
                 buf.flip();
@@ -256,16 +261,17 @@ public class Client {
                 System.out.println("Connection closed..!");
                 keys.clear();
 
-                sequenceNumber++;
-                Packet pClose = new Packet.Builder().setType(0).setSequenceNumber(sequenceNumber)
-                        .setPortNumber(serverAddr.getPort()).setPeerAddress(serverAddr.getAddress())
+                sequenceNum++;
+                Packet pClose = new Packet.Builder().setType(0).setSequenceNumber(sequenceNum)
+                        .setPortNumber(serverAddr.getPort())
+                        .setPeerAddress(serverAddr.getAddress())
                         .setPayload("Ok".getBytes()).create();
                 channel.send(pClose.toBuffer(), routerAddr);
                 System.out.println("OK sent");
             }
-            
+
             keys.clear();
         }
     }
-    
+
 }
