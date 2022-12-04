@@ -5,7 +5,19 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a0d58ffb-518c-4c44-b462-4e900b15bad0" name="Changes" comment="Final Changes">
+      <change afterPath="$PROJECT_DIR$/../Assignment3/Assign3.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Assignment3/FTPServer/Test/Smit.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Assignment3/FTPServer/demo1.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Assignment3/FTPServer/demo1.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Assignment3/FTPServer/demo1.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Assignment3/FTPServer/demo2.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Assignment3/FTPServer/demo3.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Assignment3/FTPServer/test.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Assignment3/FTPServer/xy2.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Assignment3/FTPServer/xyz1.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Assignment3/commands.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Assignment3/FTPServer/xyz.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../Assignment3/FTPServer/xyz.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Assignment3/src/main/java/Client.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Assignment3/src/main/java/Client.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Assignment3/src/main/java/Server.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Assignment3/src/main/java/Server.java" afterDir="false" />
     </list>
@@ -105,6 +117,10 @@
       <workItem from="1669397062977" duration="1285000" />
       <workItem from="1669411014095" duration="597000" />
       <workItem from="1669592853836" duration="1790000" />
+      <workItem from="1670081456302" duration="598000" />
+      <workItem from="1670101306532" duration="597000" />
+      <workItem from="1670119945092" duration="1618000" />
+      <workItem from="1670171545797" duration="775000" />
     </task>
     <task id="LOCAL-00001" summary="Added FTP Server">
       <created>1667787408751</created>

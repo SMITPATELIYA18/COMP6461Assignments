@@ -51,16 +51,15 @@ public class Server {
             }
         }
         Server server = new Server();
-        server.requestServer(serverHelper);
-//        ClientQueryHelper clientQueryHelper =server.createQuery("httpfs post -d " +
-//                "{Smit:Pateliya} " +
-//                "http://localhost:8080/xyz.txt");
-//        System.out.println(clientQueryHelper);
-//        String result = server.createResponse(clientQueryHelper,
-//                serverHelper);
-//        System.out.println(result);
-//        new Server().requestServer(serverHelper);
-
+        Runnable task = () -> {
+            try {
+                server.requestServer(serverHelper);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        };
+        Thread thread = new Thread(task);
+        thread.start();
     }
 
     private static String addFilesNameToBody(String tempBody, List<File> directoryFiles) {
@@ -135,8 +134,9 @@ public class Server {
                     if (routerPayload.equals("Hi from client")) {
                         if (serverHelper.isDebugFlag())
                             System.out.println("Received: " + routerPayload);
+                        String responseToRouter = "Hi from Server";
                         Packet serverResponse = routerPacket.toBuilder()
-                                .setPayload("Hi from Server".getBytes()).create();
+                                .setPayload(responseToRouter.getBytes()).create();
                         channel.send(serverResponse.toBuffer(), routerAddress);
                         if (serverHelper.isDebugFlag())
                             System.out.println("Sending \"Hi from Server\"");
@@ -199,7 +199,7 @@ public class Server {
                 temp.setHeaderValue(headerValue);
                 i++;
             } else if (payloadArray[i].equals("-d")) {
-                temp.setPostData(payloadArray[i + 1]);
+                temp.setPostData(payloadArray[i + 1].replaceAll("~"," "));
                 i++;
             }
         }
@@ -258,14 +258,14 @@ public class Server {
                 }
             }
             if (filteredFiles.size() == 0) {
-                headers = createHeaders(ServerHelper.FileNotFoundStatusCode);
+                return createHeaders(ServerHelper.FileNotFoundStatusCode);
             } else {
                 headers = createHeaders(ServerHelper.OkStatusCode);
             }
             tempBody = addFilesNameToBody(tempBody, filteredFiles);
         } else {
             if (directoryFiles.size() == 0) {
-                headers = createHeaders(ServerHelper.FileNotFoundStatusCode);
+                return createHeaders(ServerHelper.FileNotFoundStatusCode);
             } else {
                 headers = createHeaders(ServerHelper.OkStatusCode);
             }
@@ -309,7 +309,7 @@ public class Server {
             }
             if (!checkFileExist) {
 
-                headers = createHeaders(ServerHelper.FileNotFoundStatusCode);
+                return createHeaders(ServerHelper.FileNotFoundStatusCode);
             } else {
                 BufferedReader bufferedReader =
                         new BufferedReader(new FileReader(requestedFileObject));
@@ -332,7 +332,7 @@ public class Server {
                 headers = createHeaders(ServerHelper.OkStatusCode);
             }
         } else {
-            headers = createHeaders(ServerHelper.FileNotFoundStatusCode);
+            return createHeaders(ServerHelper.FileNotFoundStatusCode);
         }
         tempBody += "\n\t\"origin\": \"" + InetAddress.getLocalHost()
                 .getHostAddress() + "\",\n";
@@ -419,7 +419,7 @@ public class Server {
                 }
             }
         } else {
-            headers = createHeaders(ServerHelper.FileNotFoundStatusCode);
+            return createHeaders(ServerHelper.FileNotFoundStatusCode);
         }
         tempBody += "\n\t\"origin\": \"" + InetAddress.getLocalHost()
                 .getHostAddress() + "\",\n";
@@ -428,3 +428,4 @@ public class Server {
         return headers + "\n" + tempBody;
     }
 }
+//3CO9CR
